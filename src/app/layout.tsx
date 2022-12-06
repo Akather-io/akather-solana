@@ -20,7 +20,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Drawer />
           <div className="pl-[100px] lg:pl-[163px] relative">
             <Navbar className="left-[100px] lg:left-[163px]" />
-            <div className="pt-[108px]">{children}</div>
+            <div className="pt-[172px]">{children}</div>
             <Footer />
           </div>
         </AppContext>

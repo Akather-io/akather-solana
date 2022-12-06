@@ -5,6 +5,7 @@ specifiers:
   '@metaplex-foundation/mpl-token-metadata': ^2.5.2
   '@solana/spl-token': ^0.3.6
   '@solana/wallet-adapter-base': ^0.9.19
+  '@solana/wallet-adapter-react': ^0.15.25
   '@solana/wallet-adapter-react-ui': ^0.9.23
   '@solana/wallet-adapter-wallets': ^0.19.7
   '@solana/web3.js': ^1.69.0
@@ -31,6 +32,7 @@ dependencies:
   '@metaplex-foundation/mpl-token-metadata': 2.5.2_encoding@0.1.13
   '@solana/spl-token': 0.3.6_yetbdtcshciedoym5kgoeptbsu
   '@solana/wallet-adapter-base': 0.9.19_@solana+web3.js@1.69.0
+  '@solana/wallet-adapter-react': 0.15.25_jjtvdmwptpeslp524mpocf2wfe
   '@solana/wallet-adapter-react-ui': 0.9.23_qhypdbztezk6oochog4ozln6yi
   '@solana/wallet-adapter-wallets': 0.19.7_db5qc4jdxom2aqlfeo5apk7cc4
   '@solana/web3.js': 1.69.0_encoding@0.1.13

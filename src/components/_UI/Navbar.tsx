@@ -42,7 +42,7 @@ const Navbar = ({ className }: Props) => {
     <div className="p-2.5 border-0.5 border-solid border-[#F4F5FF] rounded-[20px]">
       <Container
         className={clsx(
-          "fixed inset-x-0 top-0 navbar bg-[#F4F5FF] h-[108px] rounded-[10px] !px-[16px]",
+          "fixed inset-x-0 top-8 z-10 navbar bg-[#F4F5FF] h-[108px] rounded-[10px] !px-[16px]",
           className
         )}
       >
