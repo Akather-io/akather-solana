@@ -8,7 +8,9 @@ export default function StudyPage() {
       <div className="flex justify-center">
         <div className="gap-16 mx-auto tabs">
           <a className="text-black tab tab-bordered tab-lg">I-Course</a>
-          <a className="text-black tab tab-bordered tab-active tab-lg">3D Assets</a>
+          <a className="text-black tab tab-bordered tab-active tab-lg">
+            3D Assets
+          </a>
           <a className="text-black tab tab-bordered tab-lg">My Library</a>
         </div>
       </div>
@@ -16,14 +18,20 @@ export default function StudyPage() {
         <div className="grid lg:grid-cols-3">
           <div className="space-y-4">
             <div className="text-black text-[19px] font-medium">Field</div>
-            <select className="w-full max-w-full bg-transparent select select-ghost text-[#FF8C00] -ml-3.5">
-              <option selected>Medical</option>
+            <select
+              className="w-full max-w-full bg-transparent select select-ghost text-[#FF8C00] -ml-3.5"
+              defaultValue="B"
+            >
+              <option value="B">Medical</option>
             </select>
           </div>
           <div className="space-y-4">
             <div className="text-black text-[19px] font-medium">Section</div>
-            <select className="w-full max-w-full bg-transparent select select-ghost text-[#246FFF] -ml-3.5">
-              <option selected>Anatomy</option>
+            <select
+              className="w-full max-w-full bg-transparent select select-ghost text-[#246FFF] -ml-3.5"
+              defaultValue="A"
+            >
+              <option value="A">Anatomy</option>
             </select>
           </div>
           <div className="space-y-4">
@@ -87,7 +95,9 @@ export default function StudyPage() {
               <h2 className="text-black font-semibold text-[18px] truncate w-full">
                 Install the farm ventilation...
               </h2>
-              <span className="text-white bg-red-500 border-none badge badge-md">PRO</span>
+              <span className="text-white bg-red-500 border-none badge badge-md">
+                PRO
+              </span>
             </div>
 
             <div className="flex items-center justify-between w-full">
@@ -109,7 +119,9 @@ export default function StudyPage() {
               </div>
               <div className="flex flex-col items-end">
                 <span className="text-[#27272b]/70  text-[14px]">Price</span>
-                <span className="text-[16px] font-semibold text-black">4.52 SOL</span>
+                <span className="text-[16px] font-semibold text-black">
+                  4.52 SOL
+                </span>
               </div>
             </div>
 
