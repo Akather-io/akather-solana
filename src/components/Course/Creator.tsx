@@ -101,58 +101,14 @@ export default function CourseCreator() {
       <span className="text-black font-bold text-lg uppercase">
         Create your new course
       </span>
-      <div className="bg-[#F4F5FF] rounded-[10px] p-5 grid lg:grid-cols-2 mt-10">
-        <div className="grid lg:grid-cols-3">
-          <div className="space-y-4">
-            <div className="text-black text-[19px] font-medium">Field</div>
-            <select className="w-full max-w-full bg-transparent select select-ghost text-[#FF8C00] -ml-3.5">
-              <option selected>Medical</option>
-            </select>
-          </div>
-          <div className="space-y-4">
-            <div className="text-black text-[19px] font-medium">Section</div>
-            <select
-              className="w-full max-w-full bg-transparent select select-ghost text-[#246FFF] -ml-3.5"
-              value="B"
-            >
-              <option value="B">Anatomy</option>
-            </select>
-          </div>
-          <div className="space-y-4">
-            <div className="text-black text-[19px] font-medium">Type</div>
-            <select
-              className="w-full max-w-full bg-transparent select select-ghost text-[#000000] -ml-3.5"
-              value="A"
-            >
-              <option value="A">K12, University, Proffesional...</option>
-            </select>
-          </div>
-        </div>
-        <div className="flex items-end justify-around">
-          <div className="space-y-4">
-            <div className="text-black text-[19px] font-medium">Type</div>
-            <input
-              type="text"
-              placeholder="Find I-course you want"
-              className="w-full max-w-lg bg-transparent input input-bordered"
-            />
-          </div>
-          <button
-            className="btn border-0 outline-none flex items-center justify-center gap-2 rounded-[5px] text-white bg-[linear-gradient(90deg,#4588C7_3.67%,#354387_96.33%)]"
-            onClick={onCreateCourse}
-          >
-            Create course
-          </button>
-        </div>
-      </div>
 
-      <div className="flex flex-row py-14 flex-1 gap-5">
+      <div className="flex flex-col py-14 flex-1 gap-5 md:flex-row">
         <div
-          className="bg-[#F4F5FF] rounded-[20px] p-4 h-full min-h-full w-auto cursor-pointer relative"
+          className="bg-[#F4F5FF] rounded-[20px] p-4 h-full flex min-h-full w-full md:w-auto cursor-pointer relative"
           onClick={selectImage}
         >
           <Image
-            src={image?.name ? URL.createObjectURL(image) : "/logo.png"}
+            src={image?.name ? URL.createObjectURL(image) : "/default.png"}
             width={310}
             height={310}
             alt=""
@@ -195,29 +151,6 @@ export default function CourseCreator() {
               value={price}
             />
           </div>
-          <div className="space-y-2 cursor-pointer">
-            <h2 className="text-black font-semibold text-[18px] truncate w-full">
-              Video upload
-            </h2>
-            <div className="flex flex-row items-center gap-5">
-              <div className="w-[70px] h-[70px] aspect-square min-w-0 rounded-[10px]">
-                <Image
-                  src={`https://picsum.photos/50/50?random=1`}
-                  width={50}
-                  height={50}
-                  alt=""
-                  quality={100}
-                  className="aspect-square w-full rounded-[10px]"
-                />
-              </div>
-              <div className="flex flex-col gap-3">
-                <span className="text-[#27272b]/70 text-[14px]">45 mins</span>
-                <span className="text-black">Salvador Dali</span>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="flex flex-col flex-1">
           <div className="space-y-2 mb-10 h-full">
             <h2 className="text-black font-semibold text-[18px] truncate">
               Description
@@ -228,6 +161,78 @@ export default function CourseCreator() {
               onChange={onDescriptionChange}
               value={description}
             />
+          </div>
+        </div>
+        <div className="flex flex-col flex-1">
+          <div className="space-y-2 mb-5">
+            <h2 className="text-black font-semibold text-[18px] truncate w-full">
+              Field
+            </h2>
+            <select
+              className="w-full max-w-full bg-transparent select select-ghost text-[#FF8C00] -ml-3.5"
+              defaultValue="1"
+            >
+              <option value="1">Medical 1</option>
+              <option value="2">Medical 2</option>
+              <option value="3">Medical 3</option>
+            </select>
+          </div>
+          <div className="space-y-2 mb-5">
+            <h2 className="text-black font-semibold text-[18px] truncate w-full">
+              Section
+            </h2>
+            <select
+              className="w-full max-w-full bg-transparent select select-ghost text-[#FF8C00] -ml-3.5"
+              defaultValue="1"
+            >
+              <option value="1">Anatomy 1</option>
+              <option value="2">Anatomy 2</option>
+              <option value="3">Anatomy 3</option>
+            </select>
+          </div>
+          <div className="space-y-0">
+            {Array.from(Array(3).keys()).map((i) => (
+              <div
+                key={i}
+                className="mr-2 text-xs inline-flex items-center font-bold leading-sm pl-3 pr-1 py-1 rounded-full bg-white text-gray-700 border"
+              >
+                Tag {i + 1}
+                <div className="bg-slate-300 rounded-full w-4 h-4 flex justify-center items-center ml-2 cursor-pointer">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-4 w-4"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M5.293 5.293a1 1 0 011.414 0L10 8.586l3.293-3.293a1 1 0 111.414 1.414L11.414 10l3.293 3.293a1 1 0 01-1.414 1.414L10 11.414l-3.293 3.293a1 1 0 01-1.414-1.414L8.586 10 5.293 6.707a1 1 0 010-1.414z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="space-y-2 mt-5">
+            <h2 className="text-black font-semibold text-[18px] truncate w-full">
+              Type
+            </h2>
+            <div className="flex flex-row gap-5">
+              <input
+                type="text"
+                placeholder="Type your tag type"
+                className="w-full max-w-lg bg-transparent input input-bordered"
+                onChange={onNameChange}
+                value={name}
+              />
+              <button
+                className="btn border-0 outline-none flex items-center justify-center gap-2 rounded-[5px] text-white bg-[linear-gradient(90deg,#4588C7_3.67%,#354387_96.33%)]"
+                onClick={onCreateCourse}
+              >
+                Create course
+              </button>
+            </div>
           </div>
         </div>
       </div>
