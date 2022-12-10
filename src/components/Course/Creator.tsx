@@ -72,6 +72,13 @@ export default function CourseCreator() {
     []
   );
 
+  const cleanControl = useCallback(() => {
+    setImage(undefined);
+    setName(undefined);
+    setDescription(undefined);
+    setPrice(0);
+  }, []);
+
   const onCreateCourse = useCallback(async () => {
     console.log(image, name, description, price);
 
@@ -94,7 +101,8 @@ export default function CourseCreator() {
       sellerFeeBasisPoints: 100,
     });
     toast("Create NFT success!", { type: "success" });
-  }, [image, name, description, price, nftController]);
+    cleanControl();
+  }, [image, name, description, price, nftController, cleanControl]);
 
   return (
     <>
