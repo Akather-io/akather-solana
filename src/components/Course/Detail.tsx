@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import CourseCreator from "./Creator";
 import Tab from "./Tab";
 
 const CourseDetail: React.FC = () => {
@@ -18,9 +19,9 @@ const CourseDetail: React.FC = () => {
             <path
               d="M13.2624 17.7998L16.9683 17.7998C17.5299 17.7998 18.0686 17.5786 18.4657 17.1847C18.8628 16.7909 19.0859 16.2568 19.0859 15.6998L19.0859 3.09981C19.0859 2.54285 18.8628 2.00871 18.4657 1.61488C18.0686 1.22106 17.5299 0.999806 16.9683 0.999806L13.2624 0.999805M12.9992 9.3998L0.999219 9.3998M0.999219 9.3998L5.58437 14.1998M0.999219 9.3998L5.58437 4.5998"
               stroke="#60a5fa"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             />
           </svg>
           Back to My I-Course
