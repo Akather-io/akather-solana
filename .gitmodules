@@ -1,3 +1,9 @@
 [submodule "solana-program-akather"]
 	path = solana-program-akather
 	url = https://github.com/Akather-io/solana-program-akather
+[submodule "Akather-WebGL"]
+	path = Akather-WebGL
+	url = https://github.com/Akather-io/Akather-WebGL
+[submodule "akather-vr-mob"]
+	path = akather-vr-mob
+	url = https://github.com/Akather-io/akather-vr-mob
