@@ -7,7 +7,11 @@ import Footer from "../components/_UI/Footer";
 import Navbar from "../components/_UI/Navbar";
 import Drawer from "../components/_UI/Drawer";
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en">
       {/*
@@ -21,6 +25,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <div className="pl-[100px] lg:pl-[163px] relative">
             <Navbar className="left-[100px] lg:left-[163px]" />
             <div className="pt-[172px]">{children}</div>
+
             <Footer />
           </div>
         </AppContext>

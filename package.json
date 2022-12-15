@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@headlessui/react": "^1.7.4",
+    "@metaplex-foundation/js": "^0.17.9",
     "@metaplex-foundation/mpl-token-metadata": "^2.5.2",
     "@solana/spl-token": "^0.3.6",
     "@solana/wallet-adapter-base": "^0.9.19",

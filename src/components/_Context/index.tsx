@@ -1,8 +1,14 @@
 import { PropsWithChildren } from "react";
 import SolanaContextProvider from "./SolanaContext";
+import ToastContainer from "./ToastContainer";
 
 const AppContext: React.FC<PropsWithChildren> = ({ children }) => {
-  return <SolanaContextProvider>{children}</SolanaContextProvider>;
+  return (
+    <>
+      <ToastContainer />
+      <SolanaContextProvider>{children}</SolanaContextProvider>
+    </>
+  );
 };
 
 export default AppContext;
