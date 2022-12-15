@@ -1,20 +1,67 @@
+"use client";
+import {
+  bundlrStorage,
+  Metaplex,
+  toBigNumber,
+  walletAdapterIdentity,
+} from "@metaplex-foundation/js";
+import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import clsx from "clsx";
+import { useCallback, useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 const testData = [
   {
-    id: "123",
-    issueName: "Issue 1",
+    id: "ETUPvv8dG1c6pKzUrN5ChRiqHnVDMq877iUbQWkgKHNp",
+    issueName: "ETUPvv8dG1c6pKzUrN5ChRiqHnVDMq877iUbQWkgKHNp",
     status: "Issued",
     cer: "url",
   },
   {
-    id: "1233",
-    issueName: "Issue 1",
-    status: "Not yet",
+    id: "4m25phywoCFxxLwKz8wAufPuGVFYaoemX32BioeHMALK",
+    issueName: "4m25phywoCFxxLwKz8wAufPuGVFYaoemX32BioeHMALK",
+    status: "Issued",
+    cer: "url",
   },
 ];
 
 const IssueTab = () => {
+  const [nftController, setNftController] = useState<Metaplex>();
+  const { connection } = useConnection();
+  const wallet = useWallet();
+
+  useEffect(() => {
+    setNftController(
+      Metaplex.make(connection)
+        .use(walletAdapterIdentity(wallet))
+        .use(
+          bundlrStorage({
+            address: "https://devnet.bundlr.network",
+            providerUrl: "https://api.devnet.solana.com",
+            timeout: 60000,
+          })
+        )
+    );
+  }, [connection, wallet]);
+
+  const handleIssue = useCallback(async () => {
+    if (!nftController) {
+      toast("Please fill all fields!", { type: "error" });
+      return;
+    }
+    const metadata_uri =
+      "https://arweave.net/Z9g_x9-21Zw6yvQNsguz6zjrS4GiU7G9XzIc7NkiAho";
+    const { nft } = await nftController.nfts().create({
+      uri: metadata_uri,
+      name: "Certificate Mo Ech",
+      sellerFeeBasisPoints: 100,
+      symbol: "CAKA",
+      maxSupply: toBigNumber(1),
+    });
+    console.log(
+      `Token Mint: https://explorer.solana.com/address/${nft.address.toString()}?cluster=devnet`
+    );
+  }, [nftController]);
   return (
     <div className="flex flex-1">
       <table className="table-auto w-full text-black">
@@ -74,7 +121,10 @@ const IssueTab = () => {
                     </div>
                   ) : (
                     <div className="flex justify-center items-center">
-                      <div className="flex flex-row text-sky-400 justify-center items-center gap-2 border-2 border-sky-400 px-4 py-2 rounded-full cursor-pointer">
+                      <div
+                        onClick={handleIssue}
+                        className="flex flex-row text-sky-400 justify-center items-center gap-2 border-2 border-sky-400 px-4 py-2 rounded-full cursor-pointer"
+                      >
                         <svg
                           width="22"
                           height="22"

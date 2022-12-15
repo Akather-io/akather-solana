@@ -19,6 +19,7 @@ import { toast } from "react-toastify";
 export default function CourseCreator() {
   const { connection } = useConnection();
   const wallet = useWallet();
+
   const [nftController, setNftController] = useState<Metaplex>();
 
   const ref = useRef<HTMLInputElement>(null);

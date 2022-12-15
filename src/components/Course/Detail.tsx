@@ -5,6 +5,10 @@ import CourseCreator from "./Creator";
 import Tab from "./Tab";
 
 const CourseDetail: React.FC = () => {
+  const getCourseInfo = () => {
+    //get info nft course
+  };
+
   return (
     <>
       <div className="flex">
@@ -41,7 +45,7 @@ const CourseDetail: React.FC = () => {
         </div>
         <div className="flex flex-col flex-1 gap-4">
           <div className="text-black font-semibold text-[18px] truncate w-full text-3xl">
-            Frog Dissection
+            Mo Ech
           </div>
           <div>
             Students will participate in a virtual laboratory environment with

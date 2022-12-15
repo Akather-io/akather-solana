@@ -1,8 +1,51 @@
+"use client";
+import { WalletNotConnectedError } from "@solana/wallet-adapter-base";
+import { useConnection, useWallet } from "@solana/wallet-adapter-react";
+import {
+  Keypair,
+  LAMPORTS_PER_SOL,
+  PublicKey,
+  SystemProgram,
+  Transaction,
+} from "@solana/web3.js";
 import Image from "next/image";
+import { useCallback } from "react";
 import IconSvgShop from "../../components/_Icons/IconSvgShop";
 import Container from "../../components/_UI/Container";
 
 export default function StudyPage() {
+  const { connection } = useConnection();
+  const { publicKey, sendTransaction } = useWallet();
+  const handleBuy = useCallback(async () => {
+    if (!publicKey) throw new WalletNotConnectedError();
+
+    // 890880 lamports as of 2022-09-01
+    // const lamports = await connection.getMinimumBalanceForRentExemption(0);
+
+    const transaction = new Transaction().add(
+      SystemProgram.transfer({
+        fromPubkey: publicKey,
+        toPubkey: new PublicKey("D6ghYKKSngtijiDtyEjR1Q4PwQmeh24u5mgMFkvw4dq"),
+        lamports: 5 * LAMPORTS_PER_SOL,
+      })
+    );
+
+    const {
+      context: { slot: minContextSlot },
+      value: { blockhash, lastValidBlockHeight },
+    } = await connection.getLatestBlockhashAndContext();
+
+    const signature = await sendTransaction(transaction, connection, {
+      minContextSlot,
+    });
+
+    await connection.confirmTransaction({
+      blockhash,
+      lastValidBlockHeight,
+      signature,
+    });
+  }, [publicKey, sendTransaction, connection]);
+
   return (
     <Container>
       <div className="flex justify-center">
@@ -57,6 +100,87 @@ export default function StudyPage() {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 md:gap-6 lg:gap-8 py-14">
+        <div className="bg-[#F4F5FF] rounded-[20px] p-4 space-y-4 flex flex-col w-full relative">
+          <Image
+            src={"/assets/course_default_img.png"}
+            width={310}
+            height={310}
+            alt=""
+            quality={100}
+            className="aspect-square w-full rounded-[23px]"
+          />
+
+          <div className="absolute right-8 top-4">
+            <span className="gap-1 text-black bg-gray-200 border-none badge badge-md">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-4 h-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                />
+              </svg>{" "}
+              200
+            </span>
+          </div>
+
+          <div className="flex items-center w-full">
+            <h2 className="text-black font-semibold text-[18px] truncate w-full">
+              Mo Ech
+            </h2>
+            <span className="text-white bg-red-500 border-none badge badge-md">
+              PRO
+            </span>
+          </div>
+
+          <div className="flex items-center justify-between w-full">
+            <div className="flex items-center space-x-3">
+              <div className="w-[50px] h-[50px] aspect-square min-w-0 rounded-[10px]">
+                <Image
+                  src={`https://picsum.photos/50/50?random=1455`}
+                  width={50}
+                  height={50}
+                  alt=""
+                  quality={100}
+                  className="aspect-square w-full rounded-[10px]"
+                />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-[#27272b]/70 text-[14px]">45 mins</span>
+                <span className="text-black">
+                  {"D6ghYKKSngtijiDtyEjR1Q4PwQmeh24u5mgMFkvw4dq".slice(0, 10) +
+                    "...."}
+                </span>
+              </div>
+            </div>
+            <div className="flex flex-col items-end">
+              <span className="text-[#27272b]/70  text-[14px]">Price</span>
+              <span className="text-[16px] font-semibold text-black">
+                5.0 SOL
+              </span>
+            </div>
+          </div>
+
+          <div className="flex space-x-[10px]">
+            <button
+              onClick={handleBuy}
+              className="w-[calc(50%-5px)] btn border-0 outline-none flex items-center justify-center gap-2 rounded-full text-white bg-[linear-gradient(90deg,#4588C7_3.67%,#354387_96.33%)]"
+            >
+              <IconSvgShop />
+              Buy Now
+            </button>
+            <button className="w-[calc(50%-5px)] btn border-[#27272B80] outline-none gap-2 rounded-full bg-[#F4F5FF]">
+              More detail
+            </button>
+          </div>
+        </div>
+
         {[0, 1, 2, 3, 4, 5, 6, 7].map((item, index) => (
           <div
             className="bg-[#F4F5FF] rounded-[20px] p-4 space-y-4 flex flex-col w-full relative"
