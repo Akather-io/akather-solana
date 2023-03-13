@@ -1,3 +1,4 @@
+import { PublicKey } from "@metaplex-foundation/js";
 import CourseDetail from "../../../components/Course/Detail";
 import Container from "../../../components/_UI/Container";
 
@@ -10,7 +11,7 @@ type Props = {
 export default function DetailPage({ params: { publicKey } }: Props) {
   return (
     <Container>
-      <CourseDetail publicKey={publicKey} />
+      <CourseDetail courseAccount={publicKey} />
     </Container>
   );
 }

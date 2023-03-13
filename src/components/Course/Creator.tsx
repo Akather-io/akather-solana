@@ -31,6 +31,7 @@ import {
   getMetadata,
   modifyComputeUnits,
 } from "@/utils/spl.utils";
+import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 
 export default function CourseCreator() {
   const [isLoading, setLoading] = useState<boolean>(false);
@@ -145,7 +146,7 @@ export default function CourseCreator() {
       const course_id = new BN(new Date().getTime() / 1000);
       const course_name = name;
       const course_description = description;
-      const course_price = new BN(price);
+      const course_price = new BN(price * LAMPORTS_PER_SOL);
 
       const [courseAccount] = web3.PublicKey.findProgramAddressSync(
         [Buffer.from(COURSE_SEED), course_id.toArrayLike(Buffer, "le", 8)],

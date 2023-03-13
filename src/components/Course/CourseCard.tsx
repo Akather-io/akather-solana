@@ -4,6 +4,7 @@ import Image from "next/image";
 import IconSvgShop from "../_Icons/IconSvgShop";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 
 type Props = {
   course: any;
@@ -88,7 +89,7 @@ export default function CourseCard({ course }: Props) {
         <div className="flex flex-col items-end">
           <span className="text-[#27272b]/70  text-[14px]">Price</span>
           <span className="text-[16px] font-semibold text-black">
-            {new BN(course.account.price).toNumber()} SOL
+            {course.account.price.toNumber() / LAMPORTS_PER_SOL} SOL
           </span>
         </div>
       </div>

@@ -5,34 +5,110 @@ import CourseCreator from "./Creator";
 import Tab from "./Tab";
 import { useProgram } from "@/hooks/useProgram";
 import { PublicKey } from "@metaplex-foundation/js";
-import { BN } from "@project-serum/anchor";
+import { BN, web3 } from "@project-serum/anchor";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import {
+  TOKEN_METADATA_PROGRAM_ID,
+  addPriorityFee,
+  formatAddress,
+  getMasterEdition,
+  getMetadata,
+  modifyComputeUnits,
+} from "@/utils/spl.utils";
+import {
+  AKA_TOKEN_PROGRAM_ID,
+  CARD_SEED,
+  COURSE_SEED,
+  ENROLLMENT_SEED,
+} from "@/utils/contants";
+import { useWallet } from "@solana/wallet-adapter-react";
+import {
+  ASSOCIATED_TOKEN_PROGRAM_ID,
+  TOKEN_PROGRAM_ID,
+  getAssociatedTokenAddressSync,
+} from "@solana/spl-token";
 
 type Props = {
-  publicKey: string;
+  courseAccount: string;
 };
 
-const CourseDetail: React.FC<Props> = ({ publicKey }) => {
-  const [info, setInfo] = useState<any>({});
+const CourseDetail: React.FC<Props> = ({ courseAccount }) => {
+  const [info, setInfo] = useState<any>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const program = useProgram();
+  const { publicKey } = useWallet();
+
+  const handleEnrollCourse = useCallback(async () => {
+    if (!program || !publicKey) return;
+    try {
+      const [cardAccount] = web3.PublicKey.findProgramAddressSync(
+        [
+          Buffer.from(CARD_SEED),
+          new PublicKey(courseAccount).toBuffer(),
+          publicKey.toBuffer(),
+        ],
+        AKA_TOKEN_PROGRAM_ID
+      );
+
+      const [enrollmentAccount] = web3.PublicKey.findProgramAddressSync(
+        [
+          Buffer.from(ENROLLMENT_SEED),
+          new PublicKey(courseAccount).toBuffer(),
+          publicKey.toBuffer(),
+        ],
+        AKA_TOKEN_PROGRAM_ID
+      );
+
+      const tokenAccount = getAssociatedTokenAddressSync(
+        cardAccount,
+        publicKey
+      );
+      const metadataAccount = getMetadata(cardAccount);
+      const masterEditionAccount = getMasterEdition(cardAccount);
+      const tx = await program.methods
+        .enroll()
+        .accounts({
+          course: courseAccount,
+          tokenAccount,
+          metadata: metadataAccount,
+          card: cardAccount,
+          masterEdition: masterEditionAccount,
+          enrollment: enrollmentAccount,
+          authority: publicKey,
+          systemProgram: web3.SystemProgram.programId,
+          rent: web3.SYSVAR_RENT_PUBKEY,
+          tokenProgram: TOKEN_PROGRAM_ID,
+          associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+          tokenMetadataProgram: TOKEN_METADATA_PROGRAM_ID,
+        })
+        .preInstructions([modifyComputeUnits, addPriorityFee])
+        .rpc();
+
+      console.log(tx);
+    } catch (error) {
+      console.log(error);
+    }
+  }, [courseAccount, program, publicKey]);
 
   const getCourseInfo = useCallback(async () => {
     if (!program) return;
     try {
       setIsLoading(true);
       const course = await program.account.course.fetch(
-        new PublicKey(publicKey)
+        new PublicKey(courseAccount)
       );
-      setInfo(course);
+
+      const { image } = await fetch(course.uri).then((res) => res.json());
+      setInfo({ ...course, image });
+
       console.log(course);
     } catch (error) {
       toast("Course not found", { type: "error" });
     } finally {
       setIsLoading(false);
     }
-  }, [program, publicKey]);
+  }, [courseAccount, program]);
 
   useEffect(() => {
     getCourseInfo();
@@ -67,7 +143,7 @@ const CourseDetail: React.FC<Props> = ({ publicKey }) => {
       <div className="flex flex-col py-14 flex-1 gap-5 md:flex-row items-center">
         <div className="bg-[#F4F5FF] rounded-[20px] p-4 flex w-full md:w-auto">
           <Image
-            src={"/test.png"}
+            src={info.image}
             width={510}
             height={310}
             alt=""
@@ -80,7 +156,12 @@ const CourseDetail: React.FC<Props> = ({ publicKey }) => {
             {info.name}
           </div>
           <div>{info.description}</div>
-          <div className="font-medium">Author: {info.creator.toBase58()}</div>
+          <div className="font-medium">
+            Author: {formatAddress(info?.creator.toBase58())}
+          </div>
+          <div className="font-medium">
+            Instructor: {formatAddress(info?.instructor.toBase58())}
+          </div>
           <div className="flex flex-row">
             <div className="w-20">
               <span className="text-lg">Field: </span>
@@ -99,7 +180,10 @@ const CourseDetail: React.FC<Props> = ({ publicKey }) => {
             </div>
           </div>
           <div className="flex">
-            <button className="btn border-0 gap-3 outline-none flex items-center justify-center rounded-full text-white bg-[linear-gradient(90deg,#4588C7_3.67%,#354387_96.33%)]">
+            <button
+              onClick={handleEnrollCourse}
+              className="btn border-0 gap-3 outline-none flex items-center justify-center rounded-full text-white bg-[linear-gradient(90deg,#4588C7_3.67%,#354387_96.33%)]"
+            >
               <svg
                 width="22"
                 height="20"
@@ -112,7 +196,7 @@ const CourseDetail: React.FC<Props> = ({ publicKey }) => {
                   fill="#F7F7F7"
                 />
               </svg>
-              Tech now
+              Enroll
             </button>
           </div>
         </div>

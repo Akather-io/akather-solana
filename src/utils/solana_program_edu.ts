@@ -96,11 +96,6 @@ export type SolanaProgramEdu = {
       name: "enroll";
       accounts: [
         {
-          name: "student";
-          isMut: true;
-          isSigner: true;
-        },
-        {
           name: "course";
           isMut: true;
           isSigner: false;
@@ -111,17 +106,57 @@ export type SolanaProgramEdu = {
           isSigner: false;
         },
         {
+          name: "card";
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: "tokenAccount";
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: "metadata";
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: "masterEdition";
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: "authority";
+          isMut: true;
+          isSigner: true;
+        },
+        {
+          name: "tokenProgram";
+          isMut: false;
+          isSigner: false;
+        },
+        {
+          name: "associatedTokenProgram";
+          isMut: false;
+          isSigner: false;
+        },
+        {
+          name: "tokenMetadataProgram";
+          isMut: false;
+          isSigner: false;
+        },
+        {
           name: "systemProgram";
+          isMut: false;
+          isSigner: false;
+        },
+        {
+          name: "rent";
           isMut: false;
           isSigner: false;
         }
       ];
-      args: [
-        {
-          name: "courseId";
-          type: "u64";
-        }
-      ];
+      args: [];
     }
   ];
   accounts: [
@@ -318,11 +353,6 @@ export const IDL: SolanaProgramEdu = {
       name: "enroll",
       accounts: [
         {
-          name: "student",
-          isMut: true,
-          isSigner: true,
-        },
-        {
           name: "course",
           isMut: true,
           isSigner: false,
@@ -333,17 +363,57 @@ export const IDL: SolanaProgramEdu = {
           isSigner: false,
         },
         {
+          name: "card",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "tokenAccount",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "metadata",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "masterEdition",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "authority",
+          isMut: true,
+          isSigner: true,
+        },
+        {
+          name: "tokenProgram",
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: "associatedTokenProgram",
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: "tokenMetadataProgram",
+          isMut: false,
+          isSigner: false,
+        },
+        {
           name: "systemProgram",
           isMut: false,
           isSigner: false,
         },
-      ],
-      args: [
         {
-          name: "courseId",
-          type: "u64",
+          name: "rent",
+          isMut: false,
+          isSigner: false,
         },
       ],
+      args: [],
     },
   ],
   accounts: [
