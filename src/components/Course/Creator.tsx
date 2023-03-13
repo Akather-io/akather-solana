@@ -1,10 +1,13 @@
 "use client";
+import { useProgram } from "@/hooks/useProgram";
+import { AKA_TOKEN_PROGRAM_ID, COURSE_SEED } from "@/utils/contants";
 import {
   bundlrStorage,
   Metaplex,
   toMetaplexFileFromBrowser,
   walletAdapterIdentity,
 } from "@metaplex-foundation/js";
+import { BN, web3 } from "@project-serum/anchor";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import Image from "next/image";
 import {
@@ -17,6 +20,7 @@ import {
 import { toast } from "react-toastify";
 
 export default function CourseCreator() {
+  const [isLoading, setLoading] = useState<boolean>(false);
   const { connection } = useConnection();
   const wallet = useWallet();
 
@@ -27,6 +31,9 @@ export default function CourseCreator() {
   const [name, setName] = useState<string>();
   const [description, setDescription] = useState<string>();
   const [price, setPrice] = useState<number>(0);
+
+  const program = useProgram();
+  const { publicKey } = useWallet();
 
   useEffect(() => {
     setNftController(
@@ -83,27 +90,77 @@ export default function CourseCreator() {
   const onCreateCourse = useCallback(async () => {
     console.log(image, name, description, price);
 
-    if (!nftController || !image || !name || !description || price < 0) {
+    if (
+      !nftController ||
+      !image ||
+      !name ||
+      !description ||
+      price < 0 ||
+      !publicKey
+    ) {
       toast("Please fill all fields!", { type: "error" });
       return;
     }
-    const { uri } = await nftController.nfts().uploadMetadata({
-      name,
-      symbol: "ATH",
-      description,
-      price,
-      image: await toMetaplexFileFromBrowser(image),
-    });
+    // const { uri } = await nftController.nfts().uploadMetadata({
+    //   name,
+    //   symbol: "ATH",
+    //   description,
+    //   price,
+    //   image: await toMetaplexFileFromBrowser(image),
+    // });
 
-    const { nft } = await nftController.nfts().create({
-      uri: uri,
-      name,
-      symbol: "ATH",
-      sellerFeeBasisPoints: 100,
-    });
-    toast("Create NFT success!", { type: "success" });
-    cleanControl();
-  }, [image, name, description, price, nftController, cleanControl]);
+    // const { nft } = await nftController.nfts().create({
+    //   uri: uri,
+    //   name,
+    //   symbol: "ATH",
+    //   sellerFeeBasisPoints: 100,
+    // });
+
+    const course_id = new BN(new Date().getTime() / 1000);
+    const course_name = name;
+    const course_description = description;
+    const course_price = new BN(price);
+
+    const [courseAccount] = await web3.PublicKey.findProgramAddressSync(
+      [Buffer.from(COURSE_SEED), course_id.toArrayLike(Buffer, "le", 8)],
+      AKA_TOKEN_PROGRAM_ID
+    );
+
+    try {
+      setLoading(true);
+      const tx = await program?.methods
+        .createCourse(
+          course_id,
+          course_name,
+          course_description,
+          publicKey,
+          course_price
+        )
+        .accounts({
+          course: courseAccount,
+          payer: publicKey,
+          systemProgram: web3.SystemProgram.programId,
+        })
+        .rpc();
+
+      toast("Create NFT success!", { type: "success" });
+      cleanControl();
+    } catch (error: any) {
+      toast(error, { type: "error" });
+      setLoading(false);
+    } finally {
+      setLoading(false);
+    }
+  }, [
+    image,
+    name,
+    description,
+    price,
+    nftController,
+    publicKey,
+    program?.methods,
+    cleanControl,
+  ]);
 
   return (
     <>
@@ -236,10 +293,41 @@ export default function CourseCreator() {
                 value={name}
               />
               <button
-                className="btn border-0 outline-none flex items-center justify-center gap-2 rounded-[5px] text-white bg-[linear-gradient(90deg,#4588C7_3.67%,#354387_96.33%)]"
+                className="disabled:text-white/50 btn border-0 outline-none flex items-center justify-center gap-2 rounded-[5px] text-white bg-[linear-gradient(90deg,#4588C7_3.67%,#354387_96.33%)]"
                 onClick={onCreateCourse}
+                disabled={isLoading}
               >
-                Create course
+                {isLoading && (
+                  <svg
+                    version="1.1"
+                    id="L9"
+                    xmlns="http://www.w3.org/2000/svg"
+                    xlinkHref="http://www.w3.org/1999/xlink"
+                    x="0px"
+                    y="0px"
+                    width={32}
+                    height={32}
+                    viewBox="0 0 100 100"
+                    xmlSpace="preserve"
+                    fill="currentColor"
+                  >
+                    <path
+                      fill="#fff"
+                      d="M73,50c0-12.7-10.3-23-23-23S27,37.3,27,50 M30.9,50c0-10.5,8.5-19.1,19.1-19.1S69.1,39.5,69.1,50"
+                    >
+                      <animateTransform
+                        attributeName="transform"
+                        attributeType="XML"
+                        type="rotate"
+                        dur="1s"
+                        from="0 50 50"
+                        to="360 50 50"
+                        repeatCount="indefinite"
+                      />
+                    </path>
+                  </svg>
+                )}
+                <span>Create course</span>
               </button>
             </div>
           </div>
