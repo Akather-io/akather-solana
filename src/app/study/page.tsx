@@ -2,20 +2,26 @@
 import { WalletNotConnectedError } from "@solana/wallet-adapter-base";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import {
-  Keypair,
   LAMPORTS_PER_SOL,
   PublicKey,
   SystemProgram,
   Transaction,
 } from "@solana/web3.js";
 import Image from "next/image";
-import { useCallback } from "react";
+import { use, useCallback, useEffect, useRef, useState } from "react";
 import IconSvgShop from "../../components/_Icons/IconSvgShop";
 import Container from "../../components/_UI/Container";
+import { useProgram } from "@/hooks/useProgram";
+import { BN, ProgramAccount } from "@project-serum/anchor";
+import Link from "next/link";
 
 export default function StudyPage() {
   const { connection } = useConnection();
   const { publicKey, sendTransaction } = useWallet();
+  const program = useProgram();
+
+  const [courses, setCourses] = useState<ProgramAccount[]>([]);
+
   const handleBuy = useCallback(async () => {
     if (!publicKey) throw new WalletNotConnectedError();
 
@@ -45,6 +51,23 @@ export default function StudyPage() {
       signature,
     });
   }, [publicKey, sendTransaction, connection]);
+
+  const handleGetProgram = useCallback(async () => {
+    if (!program) return;
+    try {
+      const courses = await program?.account.course.all();
+      if (courses) {
+        setCourses(courses);
+        console.log(courses);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }, [program]);
+
+  useEffect(() => {
+    handleGetProgram();
+  }, [handleGetProgram]);
 
   return (
     <Container>
@@ -100,7 +123,7 @@ export default function StudyPage() {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 md:gap-6 lg:gap-8 py-14">
-        <div className="bg-[#F4F5FF] rounded-[20px] p-4 space-y-4 flex flex-col w-full relative">
+        {/* <div className="bg-[#F4F5FF] rounded-[20px] p-4 space-y-4 flex flex-col w-full relative">
           <Image
             src={"/assets/course_default_img.png"}
             width={310}
@@ -179,12 +202,12 @@ export default function StudyPage() {
               More detail
             </button>
           </div>
-        </div>
+        </div> */}
 
-        {[0, 1, 2, 3, 4, 5, 6, 7].map((item, index) => (
+        {courses.map((item, index) => (
           <div
             className="bg-[#F4F5FF] rounded-[20px] p-4 space-y-4 flex flex-col w-full relative"
-            key={item}
+            key={index}
           >
             <Image
               src={`https://picsum.photos/310/310?random=${index}`}
@@ -217,7 +240,7 @@ export default function StudyPage() {
 
             <div className="flex items-center w-full">
               <h2 className="text-black font-semibold text-[18px] truncate w-full">
-                Install the farm ventilation...
+                {item.account.name}
               </h2>
               <span className="text-white bg-red-500 border-none badge badge-md">
                 PRO
@@ -237,14 +260,16 @@ export default function StudyPage() {
                   />
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-[#27272b]/70 text-[14px]">45 mins</span>
-                  <span className="text-black">Salvador Dali</span>
+                  <span className="text-[#27272b]/70 text-[14px]">
+                    {new BN(item.account.createAt).toNumber()}
+                  </span>
+                  <span className="text-black">abc</span>
                 </div>
               </div>
               <div className="flex flex-col items-end">
                 <span className="text-[#27272b]/70  text-[14px]">Price</span>
                 <span className="text-[16px] font-semibold text-black">
-                  4.52 SOL
+                  {new BN(item.account.price).toNumber()} SOL
                 </span>
               </div>
             </div>
@@ -254,9 +279,14 @@ export default function StudyPage() {
                 <IconSvgShop />
                 Buy Now
               </button>
-              <button className="w-[calc(50%-5px)] btn border-[#27272B80] outline-none gap-2 rounded-full bg-[#F4F5FF]">
-                More detail
-              </button>
+              <Link
+                className="w-[calc(50%-5px)] "
+                href={`/study/${item.publicKey}`}
+              >
+                <button className="btn border-[#27272B80] outline-none gap-2 rounded-full bg-[#F4F5FF]">
+                  More detail
+                </button>
+              </Link>
             </div>
           </div>
         ))}

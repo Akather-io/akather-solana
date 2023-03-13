@@ -4,7 +4,7 @@ import {
   ConnectionProvider,
   WalletProvider,
 } from "@solana/wallet-adapter-react";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 
 import {
   PhantomWalletAdapter,

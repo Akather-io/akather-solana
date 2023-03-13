@@ -1,12 +1,18 @@
 "use client";
 import { useProgram } from "@/hooks/useProgram";
-import { AKA_TOKEN_PROGRAM_ID, COURSE_SEED } from "@/utils/contants";
+import { AKA_TOKEN_PROGRAM_ID, CARD_SEED, COURSE_SEED } from "@/utils/contants";
 import {
   bundlrStorage,
   Metaplex,
   toMetaplexFileFromBrowser,
   walletAdapterIdentity,
 } from "@metaplex-foundation/js";
+import {
+  ASSOCIATED_TOKEN_PROGRAM_ID,
+  TOKEN_PROGRAM_ID,
+  getAssociatedTokenAddress,
+  getAssociatedTokenAddressSync,
+} from "@solana/spl-token";
 import { BN, web3 } from "@project-serum/anchor";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import Image from "next/image";
@@ -18,6 +24,13 @@ import {
   useState,
 } from "react";
 import { toast } from "react-toastify";
+import {
+  TOKEN_METADATA_PROGRAM_ID,
+  addPriorityFee,
+  getMasterEdition,
+  getMetadata,
+  modifyComputeUnits,
+} from "@/utils/spl.utils";
 
 export default function CourseCreator() {
   const [isLoading, setLoading] = useState<boolean>(false);
@@ -31,23 +44,24 @@ export default function CourseCreator() {
   const [name, setName] = useState<string>();
   const [description, setDescription] = useState<string>();
   const [price, setPrice] = useState<number>(0);
+  const [symbol, setSymbol] = useState<string>();
 
   const program = useProgram();
   const { publicKey } = useWallet();
 
-  useEffect(() => {
-    setNftController(
-      Metaplex.make(connection)
-        .use(walletAdapterIdentity(wallet))
-        .use(
-          bundlrStorage({
-            address: "https://devnet.bundlr.network",
-            providerUrl: "https://api.devnet.solana.com",
-            timeout: 60000,
-          })
-        )
-    );
-  }, [connection, wallet]);
+  // useEffect(() => {
+  //   setNftController(
+  //     Metaplex.make(connection)
+  //       .use(walletAdapterIdentity(wallet))
+  //       .use(
+  //         bundlrStorage({
+  //           address: "https://devnet.bundlr.network",
+  //           providerUrl: "https://api.devnet.solana.com",
+  //           timeout: 60000,
+  //         })
+  //       )
+  //   );
+  // }, [connection, wallet]);
 
   const selectImage = useCallback(() => {
     ref.current?.click();
@@ -64,6 +78,13 @@ export default function CourseCreator() {
   const onNameChange: ChangeEventHandler<HTMLInputElement> = useCallback(
     (e) => {
       setName(e.target.value);
+    },
+    []
+  );
+
+  const onSymbolChange: ChangeEventHandler<HTMLInputElement> = useCallback(
+    (e) => {
+      setSymbol(e.target.value);
     },
     []
   );
@@ -90,62 +111,94 @@ export default function CourseCreator() {
   const onCreateCourse = useCallback(async () => {
     console.log(image, name, description, price);
 
-    if (
-      !nftController ||
-      !image ||
-      !name ||
-      !description ||
-      price < 0 ||
-      !publicKey
-    ) {
+    if (!image || !name || !description || price < 0 || !publicKey || !symbol) {
       toast("Please fill all fields!", { type: "error" });
       return;
     }
-    // const { uri } = await nftController.nfts().uploadMetadata({
-    //   name,
-    //   symbol: "ATH",
-    //   description,
-    //   price,
-    //   image: await toMetaplexFileFromBrowser(image),
-    // });
-
-    // const { nft } = await nftController.nfts().create({
-    //   uri: uri,
-    //   name,
-    //   symbol: "ATH",
-    //   sellerFeeBasisPoints: 100,
-    // });
-
-    const course_id = new BN(new Date().getTime() / 1000);
-    const course_name = name;
-    const course_description = description;
-    const course_price = new BN(price);
-
-    const [courseAccount] = await web3.PublicKey.findProgramAddressSync(
-      [Buffer.from(COURSE_SEED), course_id.toArrayLike(Buffer, "le", 8)],
-      AKA_TOKEN_PROGRAM_ID
-    );
-
     try {
       setLoading(true);
+
+      const mx = Metaplex.make(connection)
+        .use(walletAdapterIdentity(wallet))
+        .use(
+          bundlrStorage({
+            address: "https://devnet.bundlr.network",
+            providerUrl: "https://api.devnet.solana.com",
+            timeout: 60000,
+          })
+        );
+      const { uri } = await mx.nfts().uploadMetadata({
+        name,
+        symbol,
+        description,
+        price,
+        image: await toMetaplexFileFromBrowser(image),
+      });
+
+      // const { nft } = await nftController.nfts().create({
+      //   uri: uri,
+      //   name,
+      //   symbol: "ATH",
+      //   sellerFeeBasisPoints: 100,
+      // });
+
+      const course_id = new BN(new Date().getTime() / 1000);
+      const course_name = name;
+      const course_description = description;
+      const course_price = new BN(price);
+
+      const [courseAccount] = web3.PublicKey.findProgramAddressSync(
+        [Buffer.from(COURSE_SEED), course_id.toArrayLike(Buffer, "le", 8)],
+        AKA_TOKEN_PROGRAM_ID
+      );
+
+      const [cardAccount] = web3.PublicKey.findProgramAddressSync(
+        [
+          Buffer.from(CARD_SEED),
+          courseAccount.toBuffer(),
+          publicKey.toBuffer(),
+        ],
+        AKA_TOKEN_PROGRAM_ID
+      );
+
+      const tokenAccount = getAssociatedTokenAddressSync(
+        cardAccount,
+        publicKey
+      );
+      const metadataAccount = getMetadata(cardAccount);
+      const masterEditionAccount = getMasterEdition(cardAccount);
+
       const tx = await program?.methods
         .createCourse(
           course_id,
           course_name,
           course_description,
           publicKey,
-          course_price
+          course_price,
+          symbol?.toLowerCase(),
+          uri
         )
         .accounts({
           course: courseAccount,
-          payer: publicKey,
+          card: cardAccount,
+          tokenAccount: tokenAccount,
+          metadata: metadataAccount,
+          masterEdition: masterEditionAccount,
+          authority: publicKey,
           systemProgram: web3.SystemProgram.programId,
+          rent: web3.SYSVAR_RENT_PUBKEY,
+          tokenProgram: TOKEN_PROGRAM_ID,
+          associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+          tokenMetadataProgram: TOKEN_METADATA_PROGRAM_ID,
         })
+        .preInstructions([modifyComputeUnits, addPriorityFee])
         .rpc();
 
       toast("Create NFT success!", { type: "success" });
       cleanControl();
     } catch (error: any) {
+      console.log(error);
+
       toast(error, { type: "error" });
       setLoading(false);
     } finally {
@@ -156,8 +209,10 @@ export default function CourseCreator() {
     name,
     description,
     price,
-    nftController,
     publicKey,
+    symbol,
+    connection,
+    wallet,
     program?.methods,
     cleanControl,
   ]);
@@ -232,16 +287,15 @@ export default function CourseCreator() {
         <div className="flex flex-col flex-1">
           <div className="space-y-2 mb-5">
             <h2 className="text-black font-semibold text-[18px] truncate w-full">
-              Field
+              Symbol
             </h2>
-            <select
-              className="w-full max-w-full bg-transparent select select-ghost text-[#FF8C00] -ml-3.5"
-              defaultValue="1"
-            >
-              <option value="1">Medical 1</option>
-              <option value="2">Medical 2</option>
-              <option value="3">Medical 3</option>
-            </select>
+            <input
+              type="text"
+              placeholder="Type your course symbol here"
+              className="w-full max-w-lg bg-transparent input input-bordered"
+              onChange={onSymbolChange}
+              value={symbol}
+            />
           </div>
           <div className="space-y-2 mb-5">
             <h2 className="text-black font-semibold text-[18px] truncate w-full">

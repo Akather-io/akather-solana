@@ -7,3 +7,4 @@ export const AKA_TOKEN_PROGRAM_ID = new PublicKey(
 
 export type SolanaProgramEduIdl = SolanaProgramEdu;
 export const COURSE_SEED = "course";
+export const CARD_SEED = "card";

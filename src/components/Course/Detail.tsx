@@ -3,11 +3,43 @@
 import Image from "next/image";
 import CourseCreator from "./Creator";
 import Tab from "./Tab";
+import { useProgram } from "@/hooks/useProgram";
+import { PublicKey } from "@metaplex-foundation/js";
+import { BN } from "@project-serum/anchor";
+import { useCallback, useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
-const CourseDetail: React.FC = () => {
-  const getCourseInfo = () => {
-    //get info nft course
-  };
+type Props = {
+  publicKey: string;
+};
+
+const CourseDetail: React.FC<Props> = ({ publicKey }) => {
+  const [info, setInfo] = useState<any>({});
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const program = useProgram();
+
+  const getCourseInfo = useCallback(async () => {
+    if (!program) return;
+    try {
+      setIsLoading(true);
+      const course = await program.account.course.fetch(
+        new PublicKey(publicKey)
+      );
+      setInfo(course);
+      console.log(course);
+    } catch (error) {
+      toast("Course not found", { type: "error" });
+    } finally {
+      setIsLoading(false);
+    }
+  }, [program, publicKey]);
+
+  useEffect(() => {
+    getCourseInfo();
+  }, [getCourseInfo]);
+
+  if (isLoading) return <div>Loading...</div>;
+  if (!info) return <div>Course not found</div>;
 
   return (
     <>
@@ -45,13 +77,10 @@ const CourseDetail: React.FC = () => {
         </div>
         <div className="flex flex-col flex-1 gap-4">
           <div className="text-black font-semibold text-[18px] truncate w-full text-3xl">
-            Mo Ech
+            {info.name}
           </div>
-          <div>
-            Students will participate in a virtual laboratory environment with
-            full tools for surgery and a simulated frog model for surgery.
-            Carefully read the operation before doing it
-          </div>
+          <div>{info.description}</div>
+          <div className="font-medium">Author: {info.creator.toBase58()}</div>
           <div className="flex flex-row">
             <div className="w-20">
               <span className="text-lg">Field: </span>

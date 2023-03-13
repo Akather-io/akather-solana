@@ -11,12 +11,52 @@ export type SolanaProgramEdu = {
           isSigner: false;
         },
         {
-          name: "payer";
+          name: "card";
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: "tokenAccount";
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: "metadata";
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: "masterEdition";
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: "authority";
           isMut: true;
           isSigner: true;
         },
         {
+          name: "tokenProgram";
+          isMut: false;
+          isSigner: false;
+        },
+        {
+          name: "associatedTokenProgram";
+          isMut: false;
+          isSigner: false;
+        },
+        {
+          name: "tokenMetadataProgram";
+          isMut: false;
+          isSigner: false;
+        },
+        {
           name: "systemProgram";
+          isMut: false;
+          isSigner: false;
+        },
+        {
+          name: "rent";
           isMut: false;
           isSigner: false;
         }
@@ -41,6 +81,14 @@ export type SolanaProgramEdu = {
         {
           name: "price";
           type: "u64";
+        },
+        {
+          name: "symbol";
+          type: "string";
+        },
+        {
+          name: "uri";
+          type: "string";
         }
       ];
     },
@@ -91,6 +139,10 @@ export type SolanaProgramEdu = {
             type: "u64";
           },
           {
+            name: "instructor";
+            type: "publicKey";
+          },
+          {
             name: "name";
             type: "string";
           },
@@ -99,8 +151,12 @@ export type SolanaProgramEdu = {
             type: "string";
           },
           {
-            name: "instructor";
-            type: "publicKey";
+            name: "symbol";
+            type: "string";
+          },
+          {
+            name: "uri";
+            type: "string";
           },
           {
             name: "createdAt";
@@ -177,12 +233,52 @@ export const IDL: SolanaProgramEdu = {
           isSigner: false,
         },
         {
-          name: "payer",
+          name: "card",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "tokenAccount",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "metadata",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "masterEdition",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "authority",
           isMut: true,
           isSigner: true,
         },
         {
+          name: "tokenProgram",
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: "associatedTokenProgram",
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: "tokenMetadataProgram",
+          isMut: false,
+          isSigner: false,
+        },
+        {
           name: "systemProgram",
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: "rent",
           isMut: false,
           isSigner: false,
         },
@@ -207,6 +303,14 @@ export const IDL: SolanaProgramEdu = {
         {
           name: "price",
           type: "u64",
+        },
+        {
+          name: "symbol",
+          type: "string",
+        },
+        {
+          name: "uri",
+          type: "string",
         },
       ],
     },
@@ -257,6 +361,10 @@ export const IDL: SolanaProgramEdu = {
             type: "u64",
           },
           {
+            name: "instructor",
+            type: "publicKey",
+          },
+          {
             name: "name",
             type: "string",
           },
@@ -265,8 +373,12 @@ export const IDL: SolanaProgramEdu = {
             type: "string",
           },
           {
-            name: "instructor",
-            type: "publicKey",
+            name: "symbol",
+            type: "string",
+          },
+          {
+            name: "uri",
+            type: "string",
           },
           {
             name: "createdAt",
