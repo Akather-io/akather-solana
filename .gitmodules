@@ -1,0 +1,9 @@
+[submodule "Akather-WebGL"]
+	path = Akather-WebGL
+	url = git@github.com:Akather-io/Akather-WebGL.git
+[submodule "akather-vr-mob"]
+	path = akather-vr-mob
+	url = git@github.com:Akather-io/akather-vr-mob.git
+[submodule "solana-program-edu"]
+	path = solana-program-edu
+	url = git@github.com:Akather-io/solana-program-edu.git
