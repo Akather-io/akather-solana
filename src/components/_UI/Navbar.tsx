@@ -5,9 +5,11 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import Container from "./Container";
 
-const SolanaConnectButton = dynamic(() => import("./SolanaConnectButton"), {
-  ssr: false,
-});
+const WalletMultiButtonDynamic = dynamic(
+  async () =>
+    (await import("@solana/wallet-adapter-react-ui")).WalletMultiButton,
+  { ssr: false }
+);
 
 const menus = [
   {
@@ -75,7 +77,9 @@ const Navbar = ({ className }: Props) => {
               ))}
             </ul>
           </div>
-          <a className="flex text-xl normal-case lg:hidden btn btn-ghost">Akather</a>
+          <a className="flex text-xl normal-case lg:hidden btn btn-ghost">
+            Akather
+          </a>
           <div className="hidden navbar-center lg:flex">
             <ul className="p-0 menu menu-horizontal">
               {menus.map((menu) => (
@@ -89,7 +93,9 @@ const Navbar = ({ className }: Props) => {
           </div>
         </div>
 
-        <div className="navbar-end">{mounted && <SolanaConnectButton />}</div>
+        <div className="navbar-end">
+          {mounted && <WalletMultiButtonDynamic />}
+        </div>
       </Container>
     </div>
   );
