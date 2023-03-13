@@ -1,2 +1,0 @@
-export const AKA_TOKEN_PROGRAM_ID =
-  "37MmPoif5k4Pm6L59h79oUxfXeKELUpJqLW6YKPgxQmm";
