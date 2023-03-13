@@ -40,3 +40,9 @@ export const modifyComputeUnits = ComputeBudgetProgram.setComputeUnitLimit({
 export const addPriorityFee = ComputeBudgetProgram.setComputeUnitPrice({
   microLamports: 1,
 });
+
+export const formatAddress = (address: string | undefined) => {
+  if (!address) return "Invalid address";
+  address = address.toLowerCase();
+  return `${address.slice(0, 6)}...${address.slice(-4)}`;
+};

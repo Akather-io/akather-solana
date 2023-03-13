@@ -2,7 +2,7 @@ import { PublicKey } from "@metaplex-foundation/js";
 import { SolanaProgramEdu } from "./solana_program_edu";
 
 export const AKA_TOKEN_PROGRAM_ID = new PublicKey(
-  "9LefZjHhB7yrNkRUV8cATsUHcoUTf5n2cjoy8B6W2GSY"
+  "E9B6Mxj284u6A66861qefD8zkMoxN3gF9krecLZSiNGi"
 );
 
 export type SolanaProgramEduIdl = SolanaProgramEdu;

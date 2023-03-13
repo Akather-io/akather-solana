@@ -14,43 +14,15 @@ import Container from "../../components/_UI/Container";
 import { useProgram } from "@/hooks/useProgram";
 import { BN, ProgramAccount } from "@project-serum/anchor";
 import Link from "next/link";
+import { formatAddress } from "@/utils/spl.utils";
+import CourseCard from "@/components/Course/CourseCard";
 
 export default function StudyPage() {
   const { connection } = useConnection();
-  const { publicKey, sendTransaction } = useWallet();
+  const { publicKey } = useWallet();
   const program = useProgram();
 
   const [courses, setCourses] = useState<ProgramAccount[]>([]);
-
-  const handleBuy = useCallback(async () => {
-    if (!publicKey) throw new WalletNotConnectedError();
-
-    // 890880 lamports as of 2022-09-01
-    // const lamports = await connection.getMinimumBalanceForRentExemption(0);
-
-    const transaction = new Transaction().add(
-      SystemProgram.transfer({
-        fromPubkey: publicKey,
-        toPubkey: new PublicKey("D6ghYKKSngtijiDtyEjR1Q4PwQmeh24u5mgMFkvw4dq"),
-        lamports: 5 * LAMPORTS_PER_SOL,
-      })
-    );
-
-    const {
-      context: { slot: minContextSlot },
-      value: { blockhash, lastValidBlockHeight },
-    } = await connection.getLatestBlockhashAndContext();
-
-    const signature = await sendTransaction(transaction, connection, {
-      minContextSlot,
-    });
-
-    await connection.confirmTransaction({
-      blockhash,
-      lastValidBlockHeight,
-      signature,
-    });
-  }, [publicKey, sendTransaction, connection]);
 
   const handleGetProgram = useCallback(async () => {
     if (!program) return;
@@ -205,90 +177,7 @@ export default function StudyPage() {
         </div> */}
 
         {courses.map((item, index) => (
-          <div
-            className="bg-[#F4F5FF] rounded-[20px] p-4 space-y-4 flex flex-col w-full relative"
-            key={index}
-          >
-            <Image
-              src={`https://picsum.photos/310/310?random=${index}`}
-              width={310}
-              height={310}
-              alt=""
-              quality={100}
-              className="aspect-square w-full rounded-[23px]"
-            />
-
-            <div className="absolute right-8 top-4">
-              <span className="gap-1 text-black bg-gray-200 border-none badge badge-md">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="w-4 h-4"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-                  />
-                </svg>{" "}
-                200
-              </span>
-            </div>
-
-            <div className="flex items-center w-full">
-              <h2 className="text-black font-semibold text-[18px] truncate w-full">
-                {item.account.name}
-              </h2>
-              <span className="text-white bg-red-500 border-none badge badge-md">
-                PRO
-              </span>
-            </div>
-
-            <div className="flex items-center justify-between w-full">
-              <div className="flex items-center space-x-3">
-                <div className="w-[50px] h-[50px] aspect-square min-w-0 rounded-[10px]">
-                  <Image
-                    src={`https://picsum.photos/50/50?random=${index}`}
-                    width={50}
-                    height={50}
-                    alt=""
-                    quality={100}
-                    className="aspect-square w-full rounded-[10px]"
-                  />
-                </div>
-                <div className="flex flex-col">
-                  <span className="text-[#27272b]/70 text-[14px]">
-                    {new BN(item.account.createAt).toNumber()}
-                  </span>
-                  <span className="text-black">abc</span>
-                </div>
-              </div>
-              <div className="flex flex-col items-end">
-                <span className="text-[#27272b]/70  text-[14px]">Price</span>
-                <span className="text-[16px] font-semibold text-black">
-                  {new BN(item.account.price).toNumber()} SOL
-                </span>
-              </div>
-            </div>
-
-            <div className="flex space-x-[10px]">
-              <button className="w-[calc(50%-5px)] btn border-0 outline-none flex items-center justify-center gap-2 rounded-full text-white bg-[linear-gradient(90deg,#4588C7_3.67%,#354387_96.33%)]">
-                <IconSvgShop />
-                Buy Now
-              </button>
-              <Link
-                className="w-[calc(50%-5px)] "
-                href={`/study/${item.publicKey}`}
-              >
-                <button className="btn border-[#27272B80] outline-none gap-2 rounded-full bg-[#F4F5FF]">
-                  More detail
-                </button>
-              </Link>
-            </div>
-          </div>
+          <CourseCard key={item.publicKey.toBase58()} course={item} />
         ))}
       </div>
     </Container>
