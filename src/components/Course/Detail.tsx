@@ -28,6 +28,7 @@ import {
   TOKEN_PROGRAM_ID,
   getAssociatedTokenAddressSync,
 } from "@solana/spl-token";
+import Link from "next/link";
 
 type Props = {
   courseAccount: string;
@@ -120,7 +121,10 @@ const CourseDetail: React.FC<Props> = ({ courseAccount }) => {
   return (
     <>
       <div className="flex">
-        <div className="text-blue-400 text-md flex flex-row items-center gap-3 bg-blue-100 px-2 py-1 rounded-md decoration-blue-400 underline cursor-pointer">
+        <Link
+          href="/study"
+          className="text-blue-400 text-md flex flex-row items-center gap-3 bg-blue-100 px-2 py-1 rounded-md decoration-blue-400 underline cursor-pointer"
+        >
           <svg
             width="21"
             height="19"
@@ -137,7 +141,7 @@ const CourseDetail: React.FC<Props> = ({ courseAccount }) => {
             />
           </svg>
           Back to My I-Course
-        </div>
+        </Link>
       </div>
 
       <div className="flex flex-col py-14 flex-1 gap-5 md:flex-row items-center">
@@ -201,7 +205,7 @@ const CourseDetail: React.FC<Props> = ({ courseAccount }) => {
           </div>
         </div>
       </div>
-      <Tab />
+      <Tab courseAccount={courseAccount} />
     </>
   );
 };

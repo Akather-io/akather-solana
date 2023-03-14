@@ -1,11 +1,16 @@
 "use client";
+import { useProgram } from "@/hooks/useProgram";
+import { formatAddress } from "@/utils/spl.utils";
 import {
   bundlrStorage,
   Metaplex,
+  PublicKey,
   toBigNumber,
   walletAdapterIdentity,
 } from "@metaplex-foundation/js";
+import { BN, ProgramAccount } from "@project-serum/anchor";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
+import { encode } from "bs58";
 import clsx from "clsx";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
@@ -25,10 +30,31 @@ const testData = [
   },
 ];
 
-const IssueTab = () => {
+type Props = {
+  courseAccount: string;
+};
+
+const IssueTab: React.FC<Props> = ({ courseAccount }) => {
   const [nftController, setNftController] = useState<Metaplex>();
   const { connection } = useConnection();
+  const [enrollments, setEnrollments] = useState<ProgramAccount[]>([]);
   const wallet = useWallet();
+  const program = useProgram();
+
+  const handleGetEnrollment = useCallback(async () => {
+    if (!program || !courseAccount) return;
+    const enrollments = await program.account.enrollment.all([
+      {
+        memcmp: {
+          offset: 8,
+          bytes: encode(new PublicKey(courseAccount).toBuffer()),
+        },
+      },
+    ]);
+    console.log(enrollments);
+
+    setEnrollments(enrollments);
+  }, [program, courseAccount]);
 
   useEffect(() => {
     setNftController(
@@ -42,7 +68,8 @@ const IssueTab = () => {
           })
         )
     );
-  }, [connection, wallet]);
+    handleGetEnrollment();
+  }, [connection, handleGetEnrollment, wallet]);
 
   const handleIssue = useCallback(async () => {
     if (!nftController) {
@@ -73,9 +100,9 @@ const IssueTab = () => {
           </tr>
         </thead>
         <tbody>
-          {testData.map((item, index) => {
+          {enrollments.map((item, index) => {
             return (
-              <tr key={item.id} className="border-b h-14">
+              <tr key={item.publicKey.toString()} className="border-b h-14">
                 <td className="text-left pl-5 h-14 flex flex-row items-center gap-2">
                   <svg
                     width="20"
@@ -90,18 +117,22 @@ const IssueTab = () => {
                       strokeWidth="3"
                     />
                   </svg>
-                  {item.issueName}
+                  {formatAddress(item.account.student.toString())}
                 </td>
                 <td
                   className={clsx(
                     "text-center font-bold",
-                    item.status === "Issued" ? "text-green-400" : "text-red-400"
+                    !item.account.completionDate
+                      ? "text-green-400"
+                      : "text-red-400"
                   )}
                 >
-                  {item.status}
+                  {!!item.account.completionDate
+                    ? item.account.completionDate
+                    : "Not Issued"}
                 </td>
                 <td className="text-center">
-                  {item.cer ? (
+                  {item.account.completionDate ? (
                     <div className="flex flex-row text-sky-400 justify-center items-center gap-2 cursor-pointer">
                       <svg
                         width="20"

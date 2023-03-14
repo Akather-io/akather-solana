@@ -4,7 +4,11 @@ import { useCallback, useState } from "react";
 import ContentTab from "./ContentTab";
 import IssueTab from "./IssueTab";
 
-const Tab = () => {
+type Props = {
+  courseAccount: string;
+};
+
+const Tab: React.FC<Props> = ({ courseAccount }) => {
   const [activeTab, setActiveTab] = useState(0);
 
   const onActiveTab = useCallback((index: number) => {
@@ -77,7 +81,11 @@ const Tab = () => {
           </span>
         </div>
       </div>
-      {activeTab === 0 ? <ContentTab /> : <IssueTab />}
+      {activeTab === 0 ? (
+        <ContentTab />
+      ) : (
+        <IssueTab courseAccount={courseAccount} />
+      )}
     </div>
   );
 };
