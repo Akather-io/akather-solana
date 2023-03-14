@@ -9,3 +9,4 @@ export type SolanaProgramEduIdl = SolanaProgramEdu;
 export const COURSE_SEED = "course";
 export const CARD_SEED = "card";
 export const ENROLLMENT_SEED = "enrollment";
+export const TREASURER_SEED = "treasurer";

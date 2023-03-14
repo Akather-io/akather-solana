@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import Container from "./Container";
+import Image from "next/image";
 
 const WalletMultiButtonDynamic = dynamic(
   async () =>
@@ -44,11 +45,11 @@ const Navbar = ({ className }: Props) => {
     <div className="p-2.5 border-0.5 border-solid border-[#F4F5FF] rounded-[20px]">
       <Container
         className={clsx(
-          "fixed inset-x-0 top-8 z-10 navbar bg-[#F4F5FF] h-[108px] rounded-[10px] !px-[16px]",
+          "fixed inset-x-0 top-8 z-10 navbar bg-[#F4F5FF] h-[108px] rounded-[10px] flex items-center shadow-md",
           className
         )}
       >
-        <div className="navbar-start">
+        <div className="navbar-start space-x-4 flex-grow">
           <div className="dropdown">
             <label tabIndex={0} className="btn btn-ghost lg:hidden">
               <svg
@@ -93,7 +94,7 @@ const Navbar = ({ className }: Props) => {
           </div>
         </div>
 
-        <div className="navbar-end">
+        <div className="navbar-end flex-grow-0 pr-4">
           {mounted && <WalletMultiButtonDynamic />}
         </div>
       </Container>

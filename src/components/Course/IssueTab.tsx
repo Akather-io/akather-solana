@@ -15,21 +15,6 @@ import clsx from "clsx";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
-const testData = [
-  {
-    id: "ETUPvv8dG1c6pKzUrN5ChRiqHnVDMq877iUbQWkgKHNp",
-    issueName: "ETUPvv8dG1c6pKzUrN5ChRiqHnVDMq877iUbQWkgKHNp",
-    status: "Issued",
-    cer: "url",
-  },
-  {
-    id: "4m25phywoCFxxLwKz8wAufPuGVFYaoemX32BioeHMALK",
-    issueName: "4m25phywoCFxxLwKz8wAufPuGVFYaoemX32BioeHMALK",
-    status: "Issued",
-    cer: "url",
-  },
-];
-
 type Props = {
   courseAccount: string;
 };
@@ -38,11 +23,12 @@ const IssueTab: React.FC<Props> = ({ courseAccount }) => {
   const [nftController, setNftController] = useState<Metaplex>();
   const { connection } = useConnection();
   const [enrollments, setEnrollments] = useState<ProgramAccount[]>([]);
+  const [isIntrustructor, setIsIntrustructor] = useState<boolean>(false);
   const wallet = useWallet();
   const program = useProgram();
 
   const handleGetEnrollment = useCallback(async () => {
-    if (!program || !courseAccount) return;
+    if (!program || !courseAccount || !wallet.publicKey) return;
     const enrollments = await program.account.enrollment.all([
       {
         memcmp: {
@@ -51,10 +37,9 @@ const IssueTab: React.FC<Props> = ({ courseAccount }) => {
         },
       },
     ]);
-    console.log(enrollments);
 
     setEnrollments(enrollments);
-  }, [program, courseAccount]);
+  }, [program, courseAccount, wallet.publicKey]);
 
   useEffect(() => {
     setNftController(

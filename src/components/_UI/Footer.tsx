@@ -5,11 +5,18 @@ const Footer = () => {
   return (
     <footer>
       <Container>
-        <div className="px-4 md:px-6 2xl:px-0 py-16 footer text-base-content bg-[#F5F5F5] border-t border-solid border-[#27272B80]">
+        <div className="px-4 md:px-6 2xl:px-0 py-16 footer text-base-content bg-[#F5F5F5] border-t border-solid border-[#d1d1d1]">
           <div>
-            <Image className="-ml-6" src="/logo-akather.png" height={111} width={313} alt="Logo" />
+            <Image
+              className="-ml-6"
+              src="/logo-akather.png"
+              height={111}
+              width={313}
+              alt="Logo"
+            />
             <p className="max-w-[320px] mt-2">
-              Experiential education platform built on metaverse. Learning any proffesional skill
+              Experiential education platform built on metaverse. Learning any
+              proffesional skill
             </p>
             <button className="px-40 rounded-[10px] mt-14 h-[60px] capitalize bg-[linear-gradient(89.96deg,#4383C3_0.03%,#374B8D_103.48%)] text-[20px] text-white font-semibold">
               Explore now
