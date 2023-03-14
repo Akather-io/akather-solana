@@ -123,6 +123,7 @@ const EnrollButton: React.FC<EnrollButtonProps> = ({
         })
         .preInstructions([modifyComputeUnits, addPriorityFee])
         .rpc();
+      toast("Enroll course successfully", { type: "success" });
       handleCheckEnrolled();
     } catch (error) {
       if (error instanceof AnchorError) {

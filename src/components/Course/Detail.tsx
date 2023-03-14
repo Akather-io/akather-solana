@@ -11,6 +11,7 @@ import { toast } from "react-toastify";
 import { formatAddress } from "@/utils/spl.utils";
 import Link from "next/link";
 import EnrollButton from "./EnrollButton";
+import IssueButton from "./IssueButton";
 
 type Props = {
   courseAccount: string;
@@ -121,10 +122,11 @@ const CourseDetail: React.FC<Props> = ({ courseAccount }) => {
               courseAccount={courseAccount}
               creator={info.creator}
             />
+            <IssueButton courseAccount={courseAccount} courseName={info.name} />
           </div>
         </div>
       </div>
-      <Tab courseAccount={courseAccount} />
+      <Tab courseAccount={courseAccount} courseName={info.name} />
     </>
   );
 };

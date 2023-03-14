@@ -10,3 +10,6 @@ export const COURSE_SEED = "course";
 export const CARD_SEED = "card";
 export const ENROLLMENT_SEED = "enrollment";
 export const TREASURER_SEED = "treasurer";
+export const CERT_SEED = "cert";
+export const CERTIFICATE_IMAGE =
+  "https://arweave.net/hAJ-V8olXULWQmFLpHuC_mUeAJYBK4daH1nPYZ6Q_Do";

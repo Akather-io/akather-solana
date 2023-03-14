@@ -6,9 +6,10 @@ import IssueTab from "./IssueTab";
 
 type Props = {
   courseAccount: string;
+  courseName: string;
 };
 
-const Tab: React.FC<Props> = ({ courseAccount }) => {
+const Tab: React.FC<Props> = ({ courseAccount, courseName }) => {
   const [activeTab, setActiveTab] = useState(0);
 
   const onActiveTab = useCallback((index: number) => {
@@ -84,7 +85,7 @@ const Tab: React.FC<Props> = ({ courseAccount }) => {
       {activeTab === 0 ? (
         <ContentTab />
       ) : (
-        <IssueTab courseAccount={courseAccount} />
+        <IssueTab courseAccount={courseAccount} courseName={courseName} />
       )}
     </div>
   );
