@@ -106,6 +106,11 @@ export type SolanaProgramEdu = {
           isSigner: false;
         },
         {
+          name: "treasurer";
+          isMut: true;
+          isSigner: false;
+        },
+        {
           name: "card";
           isMut: true;
           isSigner: false;
@@ -157,6 +162,108 @@ export type SolanaProgramEdu = {
         }
       ];
       args: [];
+    },
+    {
+      name: "updateStudent";
+      accounts: [
+        {
+          name: "course";
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: "enrollment";
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: "authority";
+          isMut: true;
+          isSigner: true;
+        },
+        {
+          name: "systemProgram";
+          isMut: false;
+          isSigner: false;
+        },
+        {
+          name: "rent";
+          isMut: false;
+          isSigner: false;
+        }
+      ];
+      args: [];
+    },
+    {
+      name: "issueCert";
+      accounts: [
+        {
+          name: "course";
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: "enrollment";
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: "certificate";
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: "tokenAccount";
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: "metadata";
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: "masterEdition";
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: "authority";
+          isMut: true;
+          isSigner: true;
+        },
+        {
+          name: "tokenProgram";
+          isMut: false;
+          isSigner: false;
+        },
+        {
+          name: "associatedTokenProgram";
+          isMut: false;
+          isSigner: false;
+        },
+        {
+          name: "tokenMetadataProgram";
+          isMut: false;
+          isSigner: false;
+        },
+        {
+          name: "systemProgram";
+          isMut: false;
+          isSigner: false;
+        },
+        {
+          name: "rent";
+          isMut: false;
+          isSigner: false;
+        }
+      ];
+      args: [
+        {
+          name: "uri";
+          type: "string";
+        }
+      ];
     }
   ];
   accounts: [
@@ -226,6 +333,12 @@ export type SolanaProgramEdu = {
             type: {
               option: "i64";
             };
+          },
+          {
+            name: "issuedAt";
+            type: {
+              option: "i64";
+            };
           }
         ];
       };
@@ -251,6 +364,26 @@ export type SolanaProgramEdu = {
       code: 6003;
       name: "InvalidCourseAccount";
       msg: "Invalid course account";
+    },
+    {
+      code: 6004;
+      name: "NotEnoughFunds";
+      msg: "Not enough funds to enroll in course";
+    },
+    {
+      code: 6005;
+      name: "Unauthorized";
+      msg: "You are not authorized to perform this action";
+    },
+    {
+      code: 6006;
+      name: "EnrollmentNotCompleted";
+      msg: "Enrollment not completed";
+    },
+    {
+      code: 6007;
+      name: "CertificateAlreadyIssued";
+      msg: "Certificate already issued";
     }
   ];
 };
@@ -363,6 +496,11 @@ export const IDL: SolanaProgramEdu = {
           isSigner: false,
         },
         {
+          name: "treasurer",
+          isMut: true,
+          isSigner: false,
+        },
+        {
           name: "card",
           isMut: true,
           isSigner: false,
@@ -414,6 +552,108 @@ export const IDL: SolanaProgramEdu = {
         },
       ],
       args: [],
+    },
+    {
+      name: "updateStudent",
+      accounts: [
+        {
+          name: "course",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "enrollment",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "authority",
+          isMut: true,
+          isSigner: true,
+        },
+        {
+          name: "systemProgram",
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: "rent",
+          isMut: false,
+          isSigner: false,
+        },
+      ],
+      args: [],
+    },
+    {
+      name: "issueCert",
+      accounts: [
+        {
+          name: "course",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "enrollment",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "certificate",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "tokenAccount",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "metadata",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "masterEdition",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "authority",
+          isMut: true,
+          isSigner: true,
+        },
+        {
+          name: "tokenProgram",
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: "associatedTokenProgram",
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: "tokenMetadataProgram",
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: "systemProgram",
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: "rent",
+          isMut: false,
+          isSigner: false,
+        },
+      ],
+      args: [
+        {
+          name: "uri",
+          type: "string",
+        },
+      ],
     },
   ],
   accounts: [
@@ -484,6 +724,12 @@ export const IDL: SolanaProgramEdu = {
               option: "i64",
             },
           },
+          {
+            name: "issuedAt",
+            type: {
+              option: "i64",
+            },
+          },
         ],
       },
     },
@@ -508,6 +754,26 @@ export const IDL: SolanaProgramEdu = {
       code: 6003,
       name: "InvalidCourseAccount",
       msg: "Invalid course account",
+    },
+    {
+      code: 6004,
+      name: "NotEnoughFunds",
+      msg: "Not enough funds to enroll in course",
+    },
+    {
+      code: 6005,
+      name: "Unauthorized",
+      msg: "You are not authorized to perform this action",
+    },
+    {
+      code: 6006,
+      name: "EnrollmentNotCompleted",
+      msg: "Enrollment not completed",
+    },
+    {
+      code: 6007,
+      name: "CertificateAlreadyIssued",
+      msg: "Certificate already issued",
     },
   ],
 };
