@@ -122,12 +122,12 @@ const IssueTab: React.FC<Props> = ({ courseAccount, courseName }) => {
           <tr>
             <th className="text-left pl-5">List of Learners </th>
             <th className="text-center">Status</th>
-            <th className="text-center">Issue</th>
+            {isIntrustructor && <th className="text-center">Issue</th>}
           </tr>
         </thead>
         <tbody>
           {enrollments &&
-            enrollments.map((item, index) => {
+            enrollments.map((item) => {
               return (
                 <tr key={item.publicKey} className="border-b h-14">
                   <td className="text-left pl-5 h-14 flex flex-row items-center gap-2">
@@ -157,30 +157,16 @@ const IssueTab: React.FC<Props> = ({ courseAccount, courseName }) => {
                       : "Not Issued"}
                   </td>
                   <td className="text-center">
-                    {
+                    {isIntrustructor && (
                       <div
                         className={clsx(
                           item.issueAt ? "text-sky-400" : "text-slate-600",
                           "flex flex-row justify-center items-center gap-2 cursor-pointer"
                         )}
                       >
-                        <svg
-                          width="20"
-                          height="20"
-                          viewBox="0 0 20 20"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="M14.9265 15.04L18.3996 18.4M9.39961 5.20001C11.3878 5.20001 12.9996 6.81178 12.9996 8.80001M17.2796 9.44001C17.2796 13.7699 13.7695 17.28 9.43961 17.28C5.1097 17.28 1.59961 13.7699 1.59961 9.44001C1.59961 5.11009 5.1097 1.60001 9.43961 1.60001C13.7695 1.60001 17.2796 5.11009 17.2796 9.44001Z"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                          />
-                        </svg>
                         {item.issueAt ? "Issued" : "Issue"}
                       </div>
-                    }
+                    )}
                   </td>
                 </tr>
               );
