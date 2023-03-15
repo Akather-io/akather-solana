@@ -39,6 +39,8 @@ import { encode } from "bs58";
 import clsx from "clsx";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import IssueButton from "./IssueButton";
+import IconLoading from "../_Icons/IconLoading";
 
 type Props = {
   courseAccount: string;
@@ -48,33 +50,9 @@ type Props = {
 const IssueTab: React.FC<Props> = ({ courseAccount, courseName }) => {
   const [enrollments, setEnrollments] = useState<any[]>([]);
   const [isIntrustructor, setIsIntrustructor] = useState<boolean>(false);
+  const [isCompleting, setIsCompleting] = useState<boolean>(false);
   const wallet = useWallet();
   const program = useProgram();
-
-  const handleCompleteCourse = useCallback(
-    async (account: any) => {
-      if (!program || !wallet.publicKey) return;
-      try {
-        const tx = await program.methods
-          .updateStudent()
-          .accounts({
-            enrollment: account.publicKey,
-            authority: wallet.publicKey,
-            course: new PublicKey(courseAccount),
-            systemProgram: web3.SystemProgram.programId,
-            rent: web3.SYSVAR_RENT_PUBKEY,
-          })
-          .rpc();
-        console.log(tx);
-      } catch (error) {
-        if (error instanceof AnchorError) {
-          console.log(error.message);
-          toast(error.message, { type: "error" });
-        }
-      }
-    },
-    [program, wallet.publicKey, courseAccount]
-  );
 
   const handleGetCourse = useCallback(async () => {
     if (!program || !courseAccount || !wallet.publicKey) return;
@@ -109,6 +87,40 @@ const IssueTab: React.FC<Props> = ({ courseAccount, courseName }) => {
       console.log(temp);
     } else setEnrollments([]);
   }, [program, courseAccount, wallet.publicKey]);
+
+  const handleCompleteCourse = useCallback(
+    async (account: any) => {
+      if (!program || !wallet.publicKey) return;
+      try {
+        setIsCompleting(true);
+        const tx = await program.methods
+          .updateStudent()
+          .accounts({
+            enrollment: account.publicKey,
+            authority: wallet.publicKey,
+            course: new PublicKey(courseAccount),
+            systemProgram: web3.SystemProgram.programId,
+            rent: web3.SYSVAR_RENT_PUBKEY,
+          })
+          .rpc();
+        toast(
+          ` ${formatAddress(account.publicKey.toString())} | Course completed!`,
+          {
+            type: "success",
+          }
+        );
+        handleGetEnrollment();
+      } catch (error) {
+        if (error instanceof AnchorError) {
+          console.log(error.message);
+          toast(error.message, { type: "error" });
+        }
+      } finally {
+        setIsCompleting(false);
+      }
+    },
+    [program, wallet.publicKey, courseAccount, handleGetEnrollment]
+  );
 
   useEffect(() => {
     handleGetCourse();
@@ -154,7 +166,7 @@ const IssueTab: React.FC<Props> = ({ courseAccount, courseName }) => {
                   >
                     {!!item.completionDate
                       ? `${new Date(item.completionDate).toLocaleString()}`
-                      : "Not Issued"}
+                      : "Not Complete"}
                   </td>
                   <td className="text-center">
                     {isIntrustructor && (
@@ -164,7 +176,26 @@ const IssueTab: React.FC<Props> = ({ courseAccount, courseName }) => {
                           "flex flex-row justify-center items-center gap-2 cursor-pointer"
                         )}
                       >
-                        {item.issueAt ? "Issued" : "Issue"}
+                        {item.completionDate ? (
+                          item.issueAt ? (
+                            "Issued"
+                          ) : (
+                            <span className="text-blue-500">
+                              Waiting for issue..
+                            </span>
+                          )
+                        ) : (
+                          <button
+                            className="flex items-center space-x-2 bg-blue-500 px-4 py-2 text-white rounded-full hover:bg-blue-600 hover:shadow-lg"
+                            onClick={() => handleCompleteCourse(item)}
+                            disabled={isCompleting}
+                          >
+                            {isCompleting && (
+                              <IconLoading width={24} height={24} />
+                            )}
+                            Get Complete
+                          </button>
+                        )}
                       </div>
                     )}
                   </td>

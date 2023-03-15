@@ -18,7 +18,7 @@ import {
   bundlrStorage,
   walletAdapterIdentity,
 } from "@metaplex-foundation/js";
-import { web3 } from "@project-serum/anchor";
+import { BN, web3 } from "@project-serum/anchor";
 import { publicKey } from "@project-serum/anchor/dist/cjs/utils";
 import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
@@ -29,18 +29,55 @@ import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { encode } from "bs58";
 import React, { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import IconLoading from "../_Icons/IconLoading";
 
 type Props = {
   courseAccount: string;
   courseName: string;
+  onCompleted?: (val: Boolean) => void;
 };
 
-const IssueButton = ({ courseAccount, courseName }: Props) => {
+const IssueButton = ({ courseAccount, courseName, onCompleted }: Props) => {
   const { connection } = useConnection();
   const [nftController, setNftController] = useState<Metaplex>();
   const wallet = useWallet();
   const program = useProgram();
-  const [isEnrolled, setIsEnrolled] = useState(true);
+  const [isCompleted, setIsCompleted] = useState(true);
+  const [isClaiming, setIsClaiming] = useState(false);
+
+  const handleCheckEnrolled = useCallback(async () => {
+    if (!program || !wallet.publicKey) return;
+    try {
+      const [enrollment] = await program.account.enrollment.all([
+        {
+          memcmp: {
+            offset: 8,
+            bytes: encode(new PublicKey(courseAccount).toBuffer()),
+          },
+        },
+        {
+          memcmp: {
+            offset: 8 + 32,
+            bytes: encode(wallet.publicKey.toBuffer()),
+          },
+        },
+      ]);
+
+      if (!!enrollment) {
+        enrollment.account.issuedAt = new BN(55);
+      }
+      const isCompleted =
+        !!enrollment &&
+        !!enrollment.account.completionDate &&
+        !enrollment.account.issuedAt;
+      setIsCompleted(isCompleted);
+      onCompleted &&
+        onCompleted(!!enrollment && !!enrollment.account.completionDate);
+    } catch (error) {
+      console.log(error);
+    } finally {
+    }
+  }, [courseAccount, onCompleted, program, wallet.publicKey]);
 
   const handleIssueCertificate = useCallback(async () => {
     try {
@@ -48,7 +85,7 @@ const IssueButton = ({ courseAccount, courseName }: Props) => {
         toast("Wallet is not connected!", { type: "error" });
         return;
       }
-
+      setIsClaiming(true);
       const [enrollmentAccount] = web3.PublicKey.findProgramAddressSync(
         [
           Buffer.from(ENROLLMENT_SEED),
@@ -57,8 +94,6 @@ const IssueButton = ({ courseAccount, courseName }: Props) => {
         ],
         AKA_TOKEN_PROGRAM_ID
       );
-
-      console.log({ enrollmentAccount });
 
       const { uri } = await nftController.nfts().uploadMetadata({
         name: `Certificate of course ${courseName}`,
@@ -101,43 +136,22 @@ const IssueButton = ({ courseAccount, courseName }: Props) => {
         })
         .preInstructions([modifyComputeUnits, addPriorityFee])
         .rpc();
+      handleCheckEnrolled();
       toast("Certificate issued!", { type: "success" });
     } catch (error) {
       console.log(error);
       toast("Something went wrong!", { type: "error" });
+    } finally {
+      setIsClaiming(false);
     }
   }, [
     courseAccount,
     courseName,
+    handleCheckEnrolled,
     nftController,
     program?.methods,
     wallet.publicKey,
   ]);
-
-  const handleCheckEnrolled = useCallback(async () => {
-    if (!program || !wallet.publicKey) return;
-    try {
-      const [enrollment] = await program.account.enrollment.all([
-        {
-          memcmp: {
-            offset: 8,
-            bytes: encode(new PublicKey(courseAccount).toBuffer()),
-          },
-        },
-        {
-          memcmp: {
-            offset: 8 + 32,
-            bytes: encode(wallet.publicKey.toBuffer()),
-          },
-        },
-      ]);
-      const isEnrolled = !!enrollment;
-      setIsEnrolled(isEnrolled);
-    } catch (error) {
-      console.log(error);
-    } finally {
-    }
-  }, [courseAccount, program, wallet.publicKey]);
 
   useEffect(() => {
     setNftController(
@@ -154,27 +168,32 @@ const IssueButton = ({ courseAccount, courseName }: Props) => {
     handleCheckEnrolled();
   }, [connection, handleCheckEnrolled, wallet]);
 
-  if (!isEnrolled) return null;
+  if (!isCompleted) return null;
   return (
     <button
       onClick={handleIssueCertificate}
-      className="flex flex-row text-sky-400 justify-center items-center gap-2 border-2 border-sky-400 px-4 py-2 rounded-full cursor-pointer"
+      className="flex flex-row text-blue-400 justify-center items-center gap-2 border-2 border-blue-400 px-4 py-2 rounded-full cursor-pointer hover:opacity-60 transition-opacity duration-300"
+      disabled={isClaiming}
     >
-      <svg
-        width="22"
-        height="22"
-        viewBox="0 0 22 22"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M13.4004 1.39996H5.00039C3.01217 1.39996 1.40039 3.01174 1.40039 4.99996V17.0001C1.40039 18.9883 3.01217 20.6001 5.00039 20.6001H17.0004C18.9886 20.6001 20.6004 18.9883 20.6004 17.0001V10.4M19.4004 4.39996L11.0004 12.8L8.60039 10.4"
-          stroke="#38bdf8"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
+      {isClaiming ? (
+        <IconLoading />
+      ) : (
+        <svg
+          width="22"
+          height="22"
+          viewBox="0 0 22 22"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M13.4004 1.39996H5.00039C3.01217 1.39996 1.40039 3.01174 1.40039 4.99996V17.0001C1.40039 18.9883 3.01217 20.6001 5.00039 20.6001H17.0004C18.9886 20.6001 20.6004 18.9883 20.6004 17.0001V10.4M19.4004 4.39996L11.0004 12.8L8.60039 10.4"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      )}
       Claim Certificate
     </button>
   );

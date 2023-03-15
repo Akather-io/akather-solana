@@ -123,7 +123,7 @@ export default function CourseCard({ courseKey }: Props) {
           </div>
         </div>
 
-        <div className="flex items-center pt-4">
+        <div className="flex items-center pt-4 space-x-4">
           <EnrollButton courseAccount={courseKey} creator={detail.creator} />
           <Link href={`/study/${detail.publicKey}`}>
             <button className="btn border-[#27272B80] outline-none gap-2 rounded-full bg-[#F4F5FF]">

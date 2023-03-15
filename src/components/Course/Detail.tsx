@@ -21,6 +21,7 @@ const CourseDetail: React.FC<Props> = ({ courseAccount }) => {
   const [info, setInfo] = useState<any>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const program = useProgram();
+  const [isCompleted, setIsCompleted] = useState<boolean>(false);
 
   const getCourseInfo = useCallback(async () => {
     if (!program) return;
@@ -90,25 +91,31 @@ const CourseDetail: React.FC<Props> = ({ courseAccount }) => {
           />
         </div>
         <div className="flex flex-col space-y-2">
-          <div className="text-black font-semibold text-[18px] truncate w-full text-3xl">
+          <div className="text-black font-semibold text-[28px] truncate w-full text-3xl">
             {info.name}
           </div>
           <div>{info.description}</div>
           <div className="font-medium">
-            Author: {formatAddress(info?.creator.toBase58())}
+            Author:
+            <span className="text-black/50 pl-2">
+              {formatAddress(info?.creator.toBase58())}
+            </span>{" "}
           </div>
           <div className="font-medium">
-            Instructor: {formatAddress(info?.instructor.toBase58())}
+            Instructor:{" "}
+            <span className="text-black/50 pl-2">
+              {formatAddress(info?.instructor.toBase58())}
+            </span>{" "}
           </div>
           <div className="flex flex-row">
             <div className="w-20">
-              <span className="text-lg">Field: </span>
+              <span className="text-lg ">Field: </span>
             </div>
             <span className="text-lg text-orange-400">Biology </span>
           </div>
           <div className="flex flex-row">
             <div className="w-20">
-              <span className="text-lg">Section: </span>
+              <span className="text-lg ">Section: </span>
             </div>
             <span className="text-lg text-blue-400">Animal </span>
           </div>
@@ -117,12 +124,21 @@ const CourseDetail: React.FC<Props> = ({ courseAccount }) => {
               High School
             </div>
           </div>
-          <div className="flex pt-5">
+          <div className="pt-5 space-y-3">
             <EnrollButton
               courseAccount={courseAccount}
               creator={info.creator}
             />
-            <IssueButton courseAccount={courseAccount} courseName={info.name} />
+            {isCompleted && (
+              <div className="text-sm text-green-500">
+                You have completed this course.
+              </div>
+            )}
+            <IssueButton
+              courseAccount={courseAccount}
+              courseName={info.name}
+              onCompleted={(val) => setIsCompleted(val.valueOf())}
+            />
           </div>
         </div>
       </div>
