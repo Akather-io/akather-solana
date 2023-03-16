@@ -1,11 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import CourseCreator from "./Creator";
 import Tab from "./Tab";
 import { useProgram } from "@/hooks/useProgram";
 import { PublicKey } from "@metaplex-foundation/js";
-import { AnchorError, BN, web3 } from "@project-serum/anchor";
+import { AnchorError } from "@project-serum/anchor";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { formatAddress } from "@/utils/spl.utils";
@@ -50,7 +49,38 @@ const CourseDetail: React.FC<Props> = ({ courseAccount }) => {
     getCourseInfo();
   }, [getCourseInfo]);
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading)
+    return (
+      <div className="animate-pulse flex flex-col py-14 flex-1 gap-5 md:flex-row ">
+        <div className="bg-gray-400 rounded-[23px] w-510 h-310"></div>
+        <div className="flex flex-col space-y-2 p-4">
+          <div className="bg-gray-400 rounded w-11/12 h-12"></div>
+          <div className="bg-gray-400 rounded w-full h-16"></div>
+          <div className="bg-gray-400 rounded w-2/3 h-6"></div>
+          <div className="bg-gray-400 rounded w-1/2 h-6"></div>
+          <div className="flex flex-row">
+            <div className="w-20">
+              <span className="bg-gray-400 rounded text-lg">Field: </span>
+            </div>
+            <span className="bg-gray-400 rounded text-lg w-20"></span>
+          </div>
+          <div className="flex flex-row">
+            <div className="w-20">
+              <span className="bg-gray-400 rounded text-lg">Section: </span>
+            </div>
+            <span className="bg-gray-400 rounded text-lg w-20"></span>
+          </div>
+          <div className="flex">
+            <div className="bg-gray-400  text-xs inline-flex items-center font-bold leading-sm px-3 py-1 rounded-full w-20 h-6"></div>
+          </div>
+          <div className="pt-5 space-y-3">
+            <div className="bg-gray-400 text-xs inline-flex items-center font-bold leading-sm px-3 py-1 rounded-full w-44 h-12"></div>
+            <div className="bg-gray-400 text-sm text-green-500 w-72 h-6"></div>
+            <div className="bg-gray-400 text-xs inline-flex items-center font-bold leading-sm px-3 py-1 rounded-full w-44 h-12"></div>
+          </div>
+        </div>
+      </div>
+    );
   if (!info) return <div>Course not found</div>;
 
   return (
@@ -79,18 +109,18 @@ const CourseDetail: React.FC<Props> = ({ courseAccount }) => {
         </Link>
       </div>
 
-      <div className="flex flex-col py-14 flex-1 gap-5 md:flex-row items-center">
-        <div className="bg-[#F4F5FF] rounded-[20px] p-4 flex w-full md:w-auto">
+      <div className="flex flex-col py-14 flex-1 gap-5 md:flex-row ">
+        <div className="bg-[#3e3e3e] rounded-[23px] overflow-hidden flex w-full md:w-auto">
           <Image
             src={info.image}
             width={510}
             height={310}
             alt=""
             quality={100}
-            className=" h-full rounded-[23px]"
+            className=" h-full"
           />
         </div>
-        <div className="flex flex-col space-y-2">
+        <div className="flex flex-col space-y-2 p-4">
           <div className="text-black font-semibold text-[28px] truncate w-full text-3xl">
             {info.name}
           </div>

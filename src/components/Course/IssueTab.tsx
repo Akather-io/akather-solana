@@ -84,7 +84,7 @@ const IssueTab: React.FC<Props> = ({ courseAccount, courseName }) => {
         issueAt: en.account.issuedAt?.toNumber() || null,
       }));
       setEnrollments(temp);
-      console.log(temp);
+      console.log({ temp });
     } else setEnrollments([]);
   }, [program, courseAccount, wallet.publicKey]);
 
@@ -165,7 +165,9 @@ const IssueTab: React.FC<Props> = ({ courseAccount, courseName }) => {
                     )}
                   >
                     {!!item.completionDate
-                      ? `${new Date(item.completionDate).toLocaleString()}`
+                      ? `${new Date(
+                          item.completionDate * 1000
+                        ).toLocaleString()}`
                       : "Not Complete"}
                   </td>
                   <td className="text-center">

@@ -63,9 +63,9 @@ const IssueButton = ({ courseAccount, courseName, onCompleted }: Props) => {
         },
       ]);
 
-      if (!!enrollment) {
-        enrollment.account.issuedAt = new BN(55);
-      }
+      // if (!!enrollment && !enrollment.account.issuedAt) {
+      //   enrollment.account.issuedAt = new BN(55);
+      // }
       const isCompleted =
         !!enrollment &&
         !!enrollment.account.completionDate &&

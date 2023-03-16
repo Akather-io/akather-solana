@@ -1,15 +1,14 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import IconSvgShop from "../../components/_Icons/IconSvgShop";
 import Container from "../../components/_UI/Container";
-import { useProgram } from "@/hooks/useProgram";
-import { BN, ProgramAccount } from "@project-serum/anchor";
+import { ProgramAccount } from "@project-serum/anchor";
 import CourseCard from "@/components/Course/CourseCard";
 import CourseNavigate from "@/components/Course/CourseNavigate";
+import useCourses from "@/hooks/useCourses";
 
 export default function StudyPage() {
-  const program = useProgram();
+  const program = useCourses();
 
   const [courses, setCourses] = useState<ProgramAccount[]>([]);
 
