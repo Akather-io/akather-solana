@@ -330,15 +330,11 @@ export type SolanaProgramEdu = {
           },
           {
             name: "completionDate";
-            type: {
-              option: "i64";
-            };
+            type: "i64";
           },
           {
             name: "issuedAt";
-            type: {
-              option: "i64";
-            };
+            type: "i64";
           }
         ];
       };
@@ -720,15 +716,11 @@ export const IDL: SolanaProgramEdu = {
           },
           {
             name: "completionDate",
-            type: {
-              option: "i64",
-            },
+            type: "i64",
           },
           {
             name: "issuedAt",
-            type: {
-              option: "i64",
-            },
+            type: "i64",
           },
         ],
       },

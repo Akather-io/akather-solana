@@ -11,6 +11,7 @@ import { formatAddress } from "@/utils/spl.utils";
 import Link from "next/link";
 import EnrollButton from "./EnrollButton";
 import IssueButton from "./IssueButton";
+import useCourses from "@/hooks/useCourses";
 
 type Props = {
   courseAccount: string;
@@ -19,7 +20,7 @@ type Props = {
 const CourseDetail: React.FC<Props> = ({ courseAccount }) => {
   const [info, setInfo] = useState<any>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const program = useProgram();
+  const program = useCourses();
   const [isCompleted, setIsCompleted] = useState<boolean>(false);
 
   const getCourseInfo = useCallback(async () => {

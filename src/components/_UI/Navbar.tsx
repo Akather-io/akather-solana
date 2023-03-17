@@ -29,6 +29,10 @@ const menus = [
     name: "Contact",
     href: "/contact",
   },
+  {
+    name: "Certificate",
+    href: "/certificate",
+  },
 ];
 
 type Props = {

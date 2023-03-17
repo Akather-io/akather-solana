@@ -18,7 +18,7 @@ export default function CourseCard({ courseKey }: Props) {
   const program = useCourses();
 
   const handleGetCourses = useCallback(async () => {
-    if (!program) return;
+    if (!program || !courseKey) return;
     try {
       const course = await program?.account.course.fetch(courseKey);
       if (course) {
@@ -42,10 +42,8 @@ export default function CourseCard({ courseKey }: Props) {
   }, [courseKey, program]);
 
   useEffect(() => {
-    if (courseKey) {
-      handleGetCourses();
-    }
-  }, [courseKey, handleGetCourses]);
+    handleGetCourses();
+  }, [handleGetCourses]);
 
   return (
     <div className="bg-[#F4F5FF] rounded-[20px] flex flex-col w-full shadow-md">

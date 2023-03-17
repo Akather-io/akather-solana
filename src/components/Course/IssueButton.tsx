@@ -68,8 +68,8 @@ const IssueButton = ({ courseAccount, courseName, onCompleted }: Props) => {
       // }
       const isCompleted =
         !!enrollment &&
-        !!enrollment.account.completionDate &&
-        !enrollment.account.issuedAt;
+        !enrollment.account.completionDate.eq(new BN(0)) &&
+        enrollment.account.issuedAt.eq(new BN(0));
       setIsCompleted(isCompleted);
       onCompleted &&
         onCompleted(!!enrollment && !!enrollment.account.completionDate);
@@ -94,21 +94,25 @@ const IssueButton = ({ courseAccount, courseName, onCompleted }: Props) => {
         ],
         AKA_TOKEN_PROGRAM_ID
       );
+      console.log("enrollmentAccount", enrollmentAccount.toBase58());
+      console.log("courseAccount", courseAccount);
 
       const { uri } = await nftController.nfts().uploadMetadata({
         name: `Certificate of course ${courseName}`,
         description: `Issue for ${wallet.publicKey.toString()}`,
         image: CERTIFICATE_IMAGE,
       });
+      console.log("uri", uri);
 
       const [certAccount] = web3.PublicKey.findProgramAddressSync(
         [
           Buffer.from(CERT_SEED),
           new PublicKey(courseAccount).toBuffer(),
-          new PublicKey(enrollmentAccount).toBuffer(),
+          enrollmentAccount.toBuffer(),
         ],
         AKA_TOKEN_PROGRAM_ID
       );
+      console.log("certAccount", certAccount);
 
       const tokenAccount = getAssociatedTokenAddressSync(
         certAccount,
@@ -123,7 +127,7 @@ const IssueButton = ({ courseAccount, courseName, onCompleted }: Props) => {
         .accounts({
           certificate: certAccount,
           course: new PublicKey(courseAccount),
-          enrollment: new PublicKey(enrollmentAccount),
+          enrollment: enrollmentAccount,
           authority: wallet.publicKey,
           tokenAccount: tokenAccount,
           metadata: metadataAccount,
@@ -168,7 +172,7 @@ const IssueButton = ({ courseAccount, courseName, onCompleted }: Props) => {
     handleCheckEnrolled();
   }, [connection, handleCheckEnrolled, wallet]);
 
-  if (!isCompleted) return null;
+  if (!isCompleted || !wallet.publicKey) return null;
   return (
     <button
       onClick={handleIssueCertificate}
