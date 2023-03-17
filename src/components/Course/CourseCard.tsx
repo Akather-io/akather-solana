@@ -1,12 +1,14 @@
-import { formatAddress } from "@/utils/spl.utils";
-import { BN } from "@project-serum/anchor";
+import { formatAddress, GetMetaPlex } from "@/utils/spl.utils";
+import { BN, web3 } from "@project-serum/anchor";
 import Image from "next/image";
 import IconSvgShop from "../_Icons/IconSvgShop";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
-import { LAMPORTS_PER_SOL } from "@solana/web3.js";
+import { LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
 import EnrollButton from "./EnrollButton";
 import useCourses from "@/hooks/useCourses";
+import { AKA_TOKEN_PROGRAM_ID, CARD_SEED } from "@/utils/contants";
+import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 
 type Props = {
   courseKey: string;
@@ -16,30 +18,45 @@ export default function CourseCard({ courseKey }: Props) {
   const [loading, setLoading] = useState(false);
   const [detail, setDetail] = useState<any>({});
   const program = useCourses();
+  const { connection } = useConnection();
+  const wallet = useWallet();
 
   const handleGetCourses = useCallback(async () => {
     if (!program || !courseKey) return;
     try {
       const course = await program?.account.course.fetch(courseKey);
       if (course) {
-        const data = await fetch(course.uri).then((res) => res.json());
-
-        setDetail({
-          publicKey: courseKey,
-          creator: course.creator.toBase58(),
-          name: course.name,
-          symbol: course.symbol,
-          image: data.image,
-          instructor: course.instructor.toBase58(),
-          price: course.price.toNumber() / LAMPORTS_PER_SOL,
-          createAt: course.createdAt.toNumber(),
+        // const data = await fetch(course.uri).then((res) => res.json());
+        const [mint] = web3.PublicKey.findProgramAddressSync(
+          [
+            Buffer.from(CARD_SEED),
+            new PublicKey(courseKey).toBuffer(),
+            course.creator.toBuffer(),
+          ],
+          AKA_TOKEN_PROGRAM_ID
+        );
+        const metaplex = GetMetaPlex(wallet, connection);
+        const { json } = await metaplex.nfts().findByMint({
+          mintAddress: mint,
         });
+        if (json) {
+          setDetail({
+            publicKey: courseKey,
+            creator: course.creator.toBase58(),
+            name: course.name,
+            symbol: course.symbol,
+            image: json.image,
+            instructor: course.instructor.toBase58(),
+            price: course.price.toNumber() / LAMPORTS_PER_SOL,
+            createAt: course.createdAt.toNumber(),
+          });
+        }
       }
     } catch (error) {
       console.log(error);
     } finally {
     }
-  }, [courseKey, program]);
+  }, [connection, courseKey, program, wallet]);
 
   useEffect(() => {
     handleGetCourses();

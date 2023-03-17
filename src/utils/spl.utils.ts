@@ -1,25 +1,14 @@
 import { BN, web3 } from "@project-serum/anchor";
-import {
-  ASSOCIATED_TOKEN_PROGRAM_ID,
-  AccountLayout,
-  AccountState,
-  TOKEN_PROGRAM_ID,
-} from "@solana/spl-token";
 
 import { PROGRAM_ADDRESS } from "@metaplex-foundation/mpl-token-metadata";
+import { ComputeBudgetProgram, Connection } from "@solana/web3.js";
 import {
-  AccountMeta,
-  Commitment,
-  ComputeBudgetProgram,
-  Connection,
-  PublicKey,
-  SYSVAR_RENT_PUBKEY,
-  Signer,
-  SystemProgram,
-  Transaction,
-  TransactionInstruction,
-} from "@solana/web3.js";
-import { SignerWalletAdapterProps } from "@solana/wallet-adapter-base";
+  bundlrStorage,
+  Metaplex,
+  walletAdapterIdentity,
+} from "@metaplex-foundation/js";
+import { Wallet } from "@solana/wallet-adapter-react";
+import { WalletAdapter } from "@solana/wallet-adapter-base";
 
 export const TOKEN_METADATA_PROGRAM_ID = new web3.PublicKey(PROGRAM_ADDRESS);
 
@@ -60,3 +49,15 @@ export const formatAddress = (address: string | undefined) => {
   address = address.toLowerCase();
   return `${address.slice(0, 6)}...${address.slice(-4)}`;
 };
+
+export function GetMetaPlex(wallet: any, connection: Connection) {
+  return Metaplex.make(connection)
+    .use(walletAdapterIdentity(wallet))
+    .use(
+      bundlrStorage({
+        address: "https://devnet.bundlr.network",
+        providerUrl: "https://api.devnet.solana.com",
+        timeout: 60000,
+      })
+    );
+}
