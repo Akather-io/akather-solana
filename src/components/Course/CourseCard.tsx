@@ -5,11 +5,8 @@ import IconSvgShop from "../_Icons/IconSvgShop";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { LAMPORTS_PER_SOL } from "@solana/web3.js";
-import { useProgram } from "@/hooks/useProgram";
-import { encode } from "bs58";
-import { useWallet } from "@solana/wallet-adapter-react";
-import { PublicKey } from "@metaplex-foundation/js";
 import EnrollButton from "./EnrollButton";
+import useCourses from "@/hooks/useCourses";
 
 type Props = {
   courseKey: string;
@@ -18,10 +15,10 @@ type Props = {
 export default function CourseCard({ courseKey }: Props) {
   const [loading, setLoading] = useState(false);
   const [detail, setDetail] = useState<any>({});
-  const program = useProgram();
+  const program = useCourses();
 
   const handleGetCourses = useCallback(async () => {
-    if (!program) return;
+    if (!program || !courseKey) return;
     try {
       const course = await program?.account.course.fetch(courseKey);
       if (course) {
@@ -45,10 +42,8 @@ export default function CourseCard({ courseKey }: Props) {
   }, [courseKey, program]);
 
   useEffect(() => {
-    if (courseKey) {
-      handleGetCourses();
-    }
-  }, [courseKey, handleGetCourses]);
+    handleGetCourses();
+  }, [handleGetCourses]);
 
   return (
     <div className="bg-[#F4F5FF] rounded-[20px] flex flex-col w-full shadow-md">
@@ -89,21 +84,21 @@ export default function CourseCard({ courseKey }: Props) {
           <h2 className="text-black font-semibold text-[18px] truncate w-full">
             {detail.name}
           </h2>
-          <span className="text-white bg-red-500 border-none badge badge-md">
+          <span className="text-white bg-red-500 border-none badge badge-md uppercase font-medium">
             {detail.symbol}
           </span>
         </div>
 
         <div className="flex items-center justify-between w-full">
           <div className="flex items-center space-x-3">
-            <div className="w-[50px] h-[50px] aspect-square min-w-0 rounded-[10px]">
+            <div className="w-[50px] h-[50px] aspect-square min-w-0 rounded-[10px] overflow-hidden">
               <Image
                 src={`https://picsum.photos/50/50?random=${detail.creator}`}
                 width={50}
                 height={50}
                 alt=""
                 quality={100}
-                className="aspect-square w-full rounded-[10px]"
+                className="aspect-square w-full"
               />
             </div>
             <div className="flex flex-col">
@@ -123,7 +118,7 @@ export default function CourseCard({ courseKey }: Props) {
           </div>
         </div>
 
-        <div className="flex items-center pt-4">
+        <div className="flex items-center pt-4 space-x-4">
           <EnrollButton courseAccount={courseKey} creator={detail.creator} />
           <Link href={`/study/${detail.publicKey}`}>
             <button className="btn border-[#27272B80] outline-none gap-2 rounded-full bg-[#F4F5FF]">

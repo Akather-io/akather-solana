@@ -29,6 +29,10 @@ const menus = [
     name: "Contact",
     href: "/contact",
   },
+  {
+    name: "Certificate",
+    href: "/certificate",
+  },
 ];
 
 type Props = {
@@ -95,7 +99,11 @@ const Navbar = ({ className }: Props) => {
         </div>
 
         <div className="navbar-end flex-grow-0 pr-4">
-          {mounted && <WalletMultiButtonDynamic />}
+          {mounted && (
+            <WalletMultiButtonDynamic
+              className={clsx("!bg-indigo-600", "hover:!bg-indigo-900")}
+            />
+          )}
         </div>
       </Container>
     </div>
