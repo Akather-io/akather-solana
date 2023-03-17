@@ -38,7 +38,7 @@ const EnrollButton: React.FC<EnrollButtonProps> = ({
   className,
 }) => {
   const [isEnrolling, setIsEnrolling] = useState<boolean>(false);
-  const [isEnrolled, setIsEnrolled] = useState(true);
+  const [isEnrolled, setIsEnrolled] = useState(false);
   const program = useProgram();
   const { publicKey } = useWallet();
 
@@ -68,7 +68,9 @@ const EnrollButton: React.FC<EnrollButtonProps> = ({
   }, [courseAccount, program, publicKey]);
 
   const handleEnrollCourse = useCallback(async () => {
-    if (!program || !publicKey || !creator) return;
+    if (!publicKey)
+      return toast("Please connect your wallet", { type: "error" });
+    if (!program || !creator) return;
     try {
       setIsEnrolling(true);
       const [cardAccount] = web3.PublicKey.findProgramAddressSync(
@@ -97,6 +99,7 @@ const EnrollButton: React.FC<EnrollButtonProps> = ({
         ],
         AKA_TOKEN_PROGRAM_ID
       );
+      console.log({ enrollmentAccount: enrollmentAccount.toString() });
 
       const tokenAccount = getAssociatedTokenAddressSync(
         cardAccount,

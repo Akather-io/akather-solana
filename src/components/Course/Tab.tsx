@@ -21,8 +21,8 @@ const Tab: React.FC<Props> = ({ courseAccount, courseName }) => {
       <div className="mb-10 flex flex-row gap-10">
         <div
           className={clsx(
-            "flex flex-row items-center pb-2 gap-4 px-2",
-            activeTab === 0 && "border-b-blue-400  border-b-2"
+            "flex flex-row items-center pb-2 gap-4 px-2 cursor-pointer",
+            activeTab === 0 && "border-b-black  border-b-2 pointer-events-none"
           )}
           onClick={() => onActiveTab(0)}
         >
@@ -52,8 +52,8 @@ const Tab: React.FC<Props> = ({ courseAccount, courseName }) => {
 
         <div
           className={clsx(
-            "flex flex-row items-center pb-2 gap-4 px-2",
-            activeTab === 1 && "border-b-blue-400  border-b-2 "
+            "flex flex-row items-center pb-2 gap-4 px-2 cursor-pointer",
+            activeTab === 1 && "border-b-black  border-b-2 pointer-events-none"
           )}
           onClick={() => onActiveTab(1)}
         >
