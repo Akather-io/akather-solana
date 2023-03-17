@@ -84,12 +84,13 @@ export default function StudyPage() {
         </Link>
       </div>
       <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 md:gap-6 lg:gap-8 py-14">
-        {courses.map((item) => (
-          <CourseCard
-            key={item.publicKey.toBase58()}
-            courseKey={item.publicKey.toString()}
-          />
-        ))}
+        {courses &&
+          courses.map((item) => (
+            <CourseCard
+              key={item.publicKey.toBase58()}
+              courseKey={item.publicKey.toString()}
+            />
+          ))}
       </div>
     </Container>
   );

@@ -36,6 +36,7 @@
   "devDependencies": {
     "autoprefixer": "^10.4.14",
     "encoding": "^0.1.13",
+    "lokijs": "^1.5.12",
     "pino-pretty": "^9.4.0",
     "postcss": "^8.4.21",
     "tailwindcss": "^3.2.7"
