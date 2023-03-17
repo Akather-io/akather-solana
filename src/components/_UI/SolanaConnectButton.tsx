@@ -1,9 +1,13 @@
 "use client";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
-import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { LAMPORTS_PER_SOL } from "@solana/web3.js";
+import dynamic from "next/dynamic";
 import { useCallback, useEffect, useState } from "react";
-
+const WalletMultiButtonDynamic = dynamic(
+  async () =>
+    (await import("@solana/wallet-adapter-react-ui")).WalletMultiButton,
+  { ssr: false }
+);
 const ConnectSolanaButton = () => {
   const wallet = useWallet();
   const { connection } = useConnection();
@@ -21,13 +25,13 @@ const ConnectSolanaButton = () => {
   }, [wallet, getBalance]);
 
   return (
-    <WalletMultiButton>
+    <WalletMultiButtonDynamic>
       {wallet.publicKey
         ? `${wallet.publicKey.toBase58().slice(0, 4)}...${wallet.publicKey
             .toBase58()
             .slice(-4)} (${(balance / LAMPORTS_PER_SOL).toFixed(2)} SOL)`
         : "Connect Wallet"}
-    </WalletMultiButton>
+    </WalletMultiButtonDynamic>
   );
 };
 

@@ -4,12 +4,9 @@ import {
   ConnectionProvider,
   WalletProvider,
 } from "@solana/wallet-adapter-react";
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 
-import {
-  PhantomWalletAdapter,
-  Coin98WalletAdapter,
-} from "@solana/wallet-adapter-wallets";
+import { PhantomWalletAdapter } from "@solana/wallet-adapter-wallets";
 import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
 import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
 import { clusterApiUrl } from "@solana/web3.js";
@@ -36,7 +33,6 @@ const SolanaContextProvider = ({ children }: any) => {
        * in the npm package `@solana/wallet-adapter-wallets`.
        */
       new PhantomWalletAdapter(),
-      new Coin98WalletAdapter(),
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [network]

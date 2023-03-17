@@ -45,7 +45,7 @@ const Navbar = ({ className }: Props) => {
     <div className="p-2.5 border-0.5 border-solid border-[#F4F5FF] rounded-[20px]">
       <Container
         className={clsx(
-          "fixed inset-x-0 top-8 z-10 navbar bg-[#F4F5FF] h-[108px] rounded-[10px] flex items-center shadow-md",
+          "fixed inset-x-0 top-8 z-10 navbar bg-sky-500 text-white h-[108px] rounded-[10px] flex items-center shadow-md",
           className
         )}
       >
@@ -85,7 +85,7 @@ const Navbar = ({ className }: Props) => {
             <ul className="p-0 menu menu-horizontal">
               {menus.map((menu) => (
                 <li key={menu.name}>
-                  <Link className="font-semibold text-black" href={menu.href}>
+                  <Link className="font-semibold text-white" href={menu.href}>
                     {menu.name}
                   </Link>
                 </li>

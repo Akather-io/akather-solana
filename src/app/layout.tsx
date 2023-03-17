@@ -1,6 +1,6 @@
+import "@solana/wallet-adapter-react-ui/styles.css";
 import "./globals.css";
 import "react-toastify/dist/ReactToastify.css";
-import "@solana/wallet-adapter-react-ui/styles.css";
 
 import AppContext from "../components/_Context";
 import Footer from "../components/_UI/Footer";
@@ -22,7 +22,7 @@ export default function RootLayout({
       <head />
       <body>
         <AppContext>
-          {/* <Drawer /> */}
+          <Drawer />
           <div>
             <Navbar className={clsx("h-[60px]", "md:h-[100px]")} />
             <div className="pt-[172px]">{children}</div>

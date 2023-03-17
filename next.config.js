@@ -4,8 +4,17 @@ const nextConfig = {
     appDir: true,
   },
   images: {
-    domains: ["picsum.photos", 'arweave.net'],
+    domains: ["picsum.photos", "arweave.net"],
   },
-}
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.resolve.fallback = {
+        fs: false,
+        lokijs: false,
+      };
+    }
+    return config;
+  },
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;
